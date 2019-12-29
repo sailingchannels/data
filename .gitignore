@@ -3,6 +3,8 @@
 project.lock.json
 .DS_Store
 *.pyc
+**/launchSettings.json
+Presentation.API/Properties/launchSettings.json
 
 # Visual Studio Code
 .vscode
@@ -30,5 +32,3 @@ msbuild.wrn
 
 # Visual Studio 2015
 .vs/
-launchSettings.json
-Presentation.API/Properties/launchSettings.json
