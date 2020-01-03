@@ -29,6 +29,18 @@ namespace Infrastructure.Repositories
         }
 
         /// <summary>
+        /// Check if this channel has been suggested by any user before
+        /// </summary>
+        /// <param name="channelIds"></param>
+        /// <returns></returns>
+        public async Task<List<Suggestion>> GetAny(List<string> channelIds)
+        {
+            return await _col
+                .Find(c => channelIds.Contains(c.ID.ChannelID))
+                .ToListAsync();
+        }
+
+        /// <summary>
         /// Adds a new suggestion to the list
         /// </summary>
         /// <param name="channelId"></param>

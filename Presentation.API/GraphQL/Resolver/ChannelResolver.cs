@@ -18,19 +18,19 @@ namespace Presentation.API.GraphQL.Resolver
         : IResolver, IChannelResolver
     {
         private readonly IChannelRepository _channelRepository;
-        private readonly IIdentifySailingChannelsUseCase _identifySailingChannelsUseCase;
+        private readonly IIdentifySailingChannelUseCase _identifySailingChannelUseCase;
         private readonly IMapper _mapper;
         private readonly ILogger<ChannelResolver> _logger;
 
         public ChannelResolver(
             ILogger<ChannelResolver> logger,
             IChannelRepository channelRepository,
-            IIdentifySailingChannelsUseCase identifySailingChannelsUseCase,
+            IIdentifySailingChannelUseCase identifySailingChannelUseCase,
             IMapper mapper
         )
         {
             _channelRepository = channelRepository ?? throw new ArgumentNullException("channelRepository");
-            _identifySailingChannelsUseCase = identifySailingChannelsUseCase ?? throw new ArgumentNullException("identifySailingChannelsUseCase");
+            _identifySailingChannelUseCase = identifySailingChannelUseCase ?? throw new ArgumentNullException("identifySailingChannelUseCase");
             _mapper = mapper ?? throw new ArgumentNullException("mapper");
             _logger = logger;
         }
@@ -98,10 +98,10 @@ namespace Presentation.API.GraphQL.Resolver
             );
 
             // IDENTIFY CHANNELS: take a list of url hints and identify sailing channels from them
-            graphQLQuery.FieldAsync<ListGraphType<ChannelIdentificationType>>(
-                "identifyChannels",
+            graphQLQuery.FieldAsync<ChannelIdentificationType>(
+                "identifyChannel",
                 arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<ListGraphType<StringGraphType>>> { Name = "channelUrlHints" }
+                    new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "channelUrlHint" }
                 ),
                 resolve: async (context) =>
                 {
@@ -109,21 +109,22 @@ namespace Presentation.API.GraphQL.Resolver
                     var userContext = (Dictionary<string, object>)context.UserContext;
                     string userId = Convert.ToString(userContext[ClaimTypes.UserId]);
 
-                    var result = await _identifySailingChannelsUseCase.Handle(
-                        new IdentifySailingChannelsRequest(
-                            context.GetArgument<List<string>>("channelUrlHints"),
+                    var result = await _identifySailingChannelUseCase.Handle(
+                        new IdentifySailingChannelRequest(
+                            context.GetArgument<string>("channelUrlHint"),
                             userId
                         )
                     );
 
                     // truncate description
-                    foreach (var channel in result.IdentifiedChannels)
+                    if (result.IdentifiedChannel != null && result.IdentifiedChannel.Channel != null)
                     {
-                        channel.Channel.Description = channel.Channel.Description.Truncate(300, ellipsis: true);
+                        result.IdentifiedChannel.Channel.Description =
+                            result.IdentifiedChannel.Channel.Description.Truncate(300, ellipsis: true);
                     }
 
                     // map entity to model
-                    return _mapper.Map<List<ChannelIdentificationModel>>(result.IdentifiedChannels);
+                    return _mapper.Map<ChannelIdentificationModel>(result.IdentifiedChannel);
                 }
             );
         }

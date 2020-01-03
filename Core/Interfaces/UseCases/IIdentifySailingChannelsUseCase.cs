@@ -3,8 +3,8 @@ using Core.DTO.UseCaseResponses;
 
 namespace Core.Interfaces.UseCases
 {
-    public interface IIdentifySailingChannelsUseCase
-        : IUseCase<IdentifySailingChannelsRequest, IdentifySailingChannelsResponse>
+    public interface IIdentifySailingChannelUseCase
+        : IUseCase<IdentifySailingChannelRequest, IdentifySailingChannelResponse>
     {
     }
 }

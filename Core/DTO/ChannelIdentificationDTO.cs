@@ -1,5 +1,6 @@
 ﻿using System;
 using Core.Entities;
+using Core.Enums;
 
 namespace Core.DTO
 {
@@ -9,5 +10,6 @@ namespace Core.DTO
         public string Source;
         public bool IsSailingChannel;
         public DisplayItem Channel;
+        public ChannelIdentificationStatus Status;
     }
 }

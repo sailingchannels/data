@@ -1,15 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Core.Enums;
 
 namespace Core.DTO.UseCaseResponses
 {
-    public class IdentifySailingChannelsResponse
+    public class IdentifySailingChannelResponse
     {
-        public List<string> Rejected { get; set; } = new List<string>();
-        public List<ChannelIdentificationDTO> IdentifiedChannels = new List<ChannelIdentificationDTO>();
+        public ChannelIdentificationStatus Status { get; set; }
+        public ChannelIdentificationDTO IdentifiedChannel { get; set; }
 
-        public IdentifySailingChannelsResponse()
+        public IdentifySailingChannelResponse(
+            ChannelIdentificationStatus status
+        )
         {
+            Status = status;
+            IdentifiedChannel = new ChannelIdentificationDTO()
+            {
+                Status = status
+            };
+        }
+
+        public IdentifySailingChannelResponse(
+            ChannelIdentificationStatus status,
+            ChannelIdentificationDTO identifiedChannel
+        )
+        {
+            Status = status;
+            identifiedChannel.Status = status;
+            IdentifiedChannel = identifiedChannel;
         }
     }
 }

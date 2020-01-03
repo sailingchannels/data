@@ -1,63 +1,100 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Core.DTO.UseCaseRequests;
 using Core.DTO.UseCaseResponses;
+using Core.Enums;
 using Core.Interfaces.UseCases;
+using Core.DTO;
+using Core.Interfaces.Repositories;
 
 namespace Core.UseCases
 {
-    public class IdentifySailingChannelsUseCase : IIdentifySailingChannelsUseCase
+    public class IdentifySailingChannelUseCase : IIdentifySailingChannelUseCase
     {
         private readonly IExtractYouTubeChannelIDUseCase _extractYouTubeChannelIDUseCase;
-        private readonly IChannelSuggestionsUseCase _channelSuggestionsUseCase;
+        private readonly IYouTubeChannelDetailUseCase _youTubeChannelDetailUseCase;
+        private readonly ISuggestionRepository _suggestionRepository;
 
-        public IdentifySailingChannelsUseCase(
+        public IdentifySailingChannelUseCase(
             IExtractYouTubeChannelIDUseCase extractYouTubeChannelIDUseCase,
-            IChannelSuggestionsUseCase channelSuggestionsUseCase
+            IYouTubeChannelDetailUseCase youTubeChannelDetailUseCase,
+            ISuggestionRepository suggestionRepository
         )
         {
             _extractYouTubeChannelIDUseCase = extractYouTubeChannelIDUseCase ?? throw new ArgumentNullException(nameof(extractYouTubeChannelIDUseCase));
-            _channelSuggestionsUseCase = channelSuggestionsUseCase ?? throw new ArgumentNullException(nameof(channelSuggestionsUseCase));
+            _youTubeChannelDetailUseCase = youTubeChannelDetailUseCase ?? throw new ArgumentNullException(nameof(youTubeChannelDetailUseCase));
+            _suggestionRepository = suggestionRepository ?? throw new ArgumentNullException(nameof(suggestionRepository));
         }
 
-        public async Task<IdentifySailingChannelsResponse> Handle(IdentifySailingChannelsRequest message)
+        public async Task<IdentifySailingChannelResponse> Handle(IdentifySailingChannelRequest message)
         {
-            var response = new IdentifySailingChannelsResponse();
-
             // guard clause
-            if(message?.PossibleYouTubeChannelURLs?.Count == 0)
+            if (string.IsNullOrWhiteSpace(message.PossibleYouTubeChannelURL))
             {
-                return response;
-            }
-
-            var channelIdsToCheck = new List<string>();
-
-            foreach (var possibleYoutubeChannelURL in message.PossibleYouTubeChannelURLs)
-            {
-                var channelIDResponse = await _extractYouTubeChannelIDUseCase.Handle(
-                    new ExtractYouTubeChannelIDRequest(possibleYoutubeChannelURL)
+                return new IdentifySailingChannelResponse(
+                    ChannelIdentificationStatus.NotValid
                 );
-
-                // could not identy a channel
-                if (string.IsNullOrWhiteSpace(channelIDResponse.ChannelID))
-                {
-                    response.Rejected.Add(possibleYoutubeChannelURL);
-                }
-                else
-                {
-                    channelIdsToCheck.Add(possibleYoutubeChannelURL);
-                }
             }
 
-            // acquire channel details
-            var details = await _channelSuggestionsUseCase.Handle(
-                new ChannelSuggestionsRequest(channelIdsToCheck, message.UserId, null)
+            // try to identify a channel id from the URL
+            var channelIDResponse = await _extractYouTubeChannelIDUseCase.Handle(
+                new ExtractYouTubeChannelIDRequest(message.PossibleYouTubeChannelURL)
             );
 
-            response.IdentifiedChannels = details.Suggestions;
+            // could not identy a channel
+            if (string.IsNullOrWhiteSpace(channelIDResponse.ChannelID))
+            {
+                return new IdentifySailingChannelResponse(
+                    ChannelIdentificationStatus.NotValid
+                );
+            }
 
-            return response;
+            // fetch details for youtube channel
+            var channelDetails = await _youTubeChannelDetailUseCase.Handle(
+                new YouTubeChannelDetailRequest(
+                    new List<string>() { channelIDResponse.ChannelID }
+                )
+            );
+
+            if (channelDetails.IdentifiedChannels?.Count == 0)
+            {
+                return new IdentifySailingChannelResponse(
+                    ChannelIdentificationStatus.NotValid
+                );
+            }
+
+            ChannelIdentificationDTO channelDetail = channelDetails.IdentifiedChannels.First();
+
+            // we discovered a newly listed channel
+            if (channelDetail.Source.ToLower() == "yt")
+            {
+                // check if channel has been suggested before
+                var suggestions = await _suggestionRepository.GetAny(
+                    new List<string>() { channelIDResponse.ChannelID }
+                );
+
+                // a suggestion does already exist for this channel
+                if (suggestions.Count > 0)
+                {
+                    return new IdentifySailingChannelResponse(
+                        ChannelIdentificationStatus.AlreadySuggested
+                    );
+                }
+
+                // we found a novel channel at this point!
+                return new IdentifySailingChannelResponse(
+                    ChannelIdentificationStatus.Novel,
+                    channelDetail
+                );
+            }
+
+            // this channel must already be listed
+            return new IdentifySailingChannelResponse(
+                ChannelIdentificationStatus.AlreadyListed,
+                channelDetail
+            );
         }
     }
 }
