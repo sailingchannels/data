@@ -16,6 +16,7 @@
     <Folder Include="DTO\UseCaseRequests\" />
     <Folder Include="DTO\UseCaseResponses\" />
     <Folder Include="Extensions\" />
+    <Folder Include="Interfaces\Services\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="DTO\UseCaseRequests\GenerateMainMenuRequest.cs" />

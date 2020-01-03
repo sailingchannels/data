@@ -23,6 +23,8 @@ namespace Presentation.API
         public IConfiguration Configuration { get; }
         public ILifetimeScope AutofacContainer { get; private set; }
 
+        readonly string AllowDevAndProdOrigins = "_allowDevAndProdOrigins";
+
         // ConfigureContainer is where you can register things directly
         // with Autofac. This runs after ConfigureServices so the things
         // here will override registrations made in ConfigureServices.
@@ -36,6 +38,20 @@ namespace Presentation.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            // cors
+            services.AddCors(options =>
+            {
+                options.AddPolicy(AllowDevAndProdOrigins,
+                    builder =>
+                    {
+                        builder.WithOrigins("http://localhost:4000",
+                                            "https://sailing-channels.com")
+                                                .AllowAnyHeader()
+                                                .AllowAnyMethod()
+                                                .AllowCredentials();
+                    });
+            });
 
             // add authentication options, default is JWT
             services
@@ -66,10 +82,7 @@ namespace Presentation.API
             }
 
             // global cors policy
-            app.UseCors(x => x
-                .AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader());
+            app.UseCors(AllowDevAndProdOrigins);
 
             app.UseHttpsRedirection();
             app.UseRouting();

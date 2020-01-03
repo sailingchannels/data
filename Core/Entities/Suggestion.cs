@@ -2,15 +2,15 @@
 
 namespace Core.Entities
 {
-    public class SuggestionID
+    public class FlagID
     {
         public string ChannelID { get; set; }
         public string UserID { get; set; }
     }
 
-    public class Suggestion
+    public class Flag
     {
-        public SuggestionID ID { get; set; }
+        public FlagID ID { get; set; }
         public DateTime When { get; set; }
     }
 }

@@ -1,6 +1,7 @@
-﻿namespace Core.Entities
+﻿using System;
+namespace Infrastructure.API.Models
 {
-    public abstract class DisplayItem
+    public class DisplayItemModel
     {
         public string ID { get; set; }
         public string Title { get; set; }

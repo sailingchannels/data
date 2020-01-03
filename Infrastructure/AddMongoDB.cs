@@ -14,8 +14,14 @@ namespace Infrastructure
             // entity mappings
             services.AddMongoDBMappings();
 
+            string connString = "mongodb://localhost:27017";
+            if(!string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("MONGODB")))
+            {
+                connString = Environment.GetEnvironmentVariable("MONGODB");
+            }
+
             // database
-            services.AddSingleton<IMongoClient>(f => new MongoClient(Environment.GetEnvironmentVariable("MONGODB")));
+            services.AddSingleton<IMongoClient>(f => new MongoClient());
             services.AddSingleton(f => f.GetRequiredService<IMongoClient>().GetDatabase("sailing-channels"));
 
             // collections
@@ -24,6 +30,10 @@ namespace Infrastructure
             services.AddSingleton(f => f.GetRequiredService<IMongoDatabase>().GetCollection<Video>("videos"));
             services.AddSingleton(f => f.GetRequiredService<IMongoDatabase>().GetCollection<Tag>("tags"));
             services.AddSingleton(f => f.GetRequiredService<IMongoDatabase>().GetCollection<Topic>("topics"));
+            services.AddSingleton(f => f.GetRequiredService<IMongoDatabase>().GetCollection<Flag>("flags"));
+            services.AddSingleton(f => f.GetRequiredService<IMongoDatabase>().GetCollection<Suggestion>("suggestions"));
+            services.AddSingleton(f => f.GetRequiredService<IMongoDatabase>().GetCollection<SailingTerm>("sailingterms"));
+            services.AddSingleton(f => f.GetRequiredService<IMongoDatabase>().GetCollection<Subscriber>("subscribers"));
         }
     }
 }

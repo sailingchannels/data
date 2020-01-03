@@ -1,0 +1,21 @@
+﻿using Infrastructure.API.Models;
+using GraphQL.Types;
+
+namespace Presentation.API.GraphQL.Types
+{
+    public sealed class ChannelIdentificationType
+        : ObjectGraphType<ChannelIdentificationModel>, IGraphQLType
+    {
+        public ChannelIdentificationType()
+        {
+            Name = "ChannelIdentification";
+
+            Field(i => i.ChannelID, nullable: false);
+
+            Field<DisplayItemType>("Channel");
+
+            Field(i => i.IsSailingChannel, nullable: false);
+            Field(i => i.Source, nullable: true);
+        }
+    }
+}

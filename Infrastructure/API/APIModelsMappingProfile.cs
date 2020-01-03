@@ -18,6 +18,12 @@ namespace Infrastructure.API
             CreateMap<Topic, TopicModel>();
             CreateMap<TopicOverviewDTO, TopicOverviewModel>();
             CreateMap<TopicDetailResponse, TopicDetailModel>();
+            CreateMap<ChannelIdentificationDTO, ChannelIdentificationModel>();
+            CreateMap<DisplayItem, DisplayItemModel>();
+
+            CreateMap<Subscriber, SubscriberModel>()
+                .ForMember(dest => dest.ChannelID, opt => opt.MapFrom(src => src.ID.ChannelID))
+                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.ID.Date));
         }
     }
 }

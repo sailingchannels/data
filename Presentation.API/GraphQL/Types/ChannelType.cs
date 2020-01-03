@@ -17,9 +17,9 @@ namespace Presentation.API.GraphQL.Types
             Field(i => i.PublishedAt, nullable: false);
             Field(i => i.Subscribers, nullable: false);
             Field(i => i.SubscribersHidden, nullable: false);
-            Field(i => i.Thumbnail, nullable: false);
             Field(i => i.VideoCount, nullable: false);
             Field(i => i.Views, nullable: false);
+            Field(i => i.Thumbnail, nullable: true);
 
             Field<ListGraphType<ChannelCustomLinkType>>("CustomLinks");
             Field<ListGraphType<StringGraphType>>("Keywords");

@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
+using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using ILoggerFactory = Microsoft.Extensions.Logging.ILoggerFactory;
@@ -44,9 +45,8 @@ namespace Presentation.API.Auth
             // decode JWT
             var payload = Jose.JWT.Decode<JWTPayload>(
                 jwtRawValue,
-                Environment.GetEnvironmentVariable("JWT_SECRET"),
-                Jose.JweAlgorithm.PBES2_HS512_A256KW,
-                Jose.JweEncryption.A256CBC_HS512
+                Encoding.ASCII.GetBytes(Environment.GetEnvironmentVariable("JWT_SECRET")),
+                Jose.JwsAlgorithm.HS256
             );
 
             // validate the shape of the payload

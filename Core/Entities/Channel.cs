@@ -15,7 +15,6 @@ namespace Core.Entities
         public bool DetectedLanguage { get; set; }
         public int LastUploadAt { get; set; }
         public bool SubscribersHidden { get; set; }
-        public string Thumbnail { get; set; }
         public ChannelPopularity Popularity { get; set; }
         public List<string> Keywords { get; set; } = new List<string>();
         public List<ChannelCustomLink> CustomLinks { get; set; } = new List<ChannelCustomLink>();

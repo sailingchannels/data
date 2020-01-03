@@ -44,18 +44,28 @@ namespace Presentation.API.DI
                     .Any(i => i.IsAssignableFrom(typeof(IGraphQLType))))
                 .AsSelf();
 
-            builder.RegisterType<ChannelType>();
+            //builder.RegisterType<ChannelType>();
 
             #endregion
-
-            #region Repositories
 
             var infrastructureData = AppDomain.CurrentDomain.GetAssemblies().
                 SingleOrDefault(assembly => assembly.GetName().Name == "Infrastructure");
 
+            #region Repositories
+
             // scan the assembly for classes that end in "Repository" and add them to the DI container
             builder.RegisterAssemblyTypes(infrastructureData)
                .Where(t => t.Name.EndsWith("Repository"))
+               .AsImplementedInterfaces()
+               .InstancePerLifetimeScope();
+
+            #endregion
+
+            #region Services
+
+            // scan the assembly for classes that end in "Repository" and add them to the DI container
+            builder.RegisterAssemblyTypes(infrastructureData)
+               .Where(t => t.Name.EndsWith("Service"))
                .AsImplementedInterfaces()
                .InstancePerLifetimeScope();
 
