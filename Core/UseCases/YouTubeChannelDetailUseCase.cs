@@ -32,51 +32,39 @@ namespace Core.UseCases
 
         public async Task<YouTubeChannelDetailResponse> Handle(YouTubeChannelDetailRequest message)
         {
-            var response = new YouTubeChannelDetailResponse();
+            var identifiedChannels = new List<ChannelIdentificationDto>();
 
-            // read all sailing terms from database
-            List<SailingTerm> sailingTerms = await _sailingTermRepository.GetAll();
+            var sailingTerms = await _sailingTermRepository.GetAll();
+            var storedChannels = await _channelRepository.GetAll(message.ChannelIdsToCheck);
 
-            // try to fetch channels from database, this will likely return a subset of the channel ids
-            // requested, since we might not have any channel in our database
-            List<Channel> dbChannels = await _channelRepository.GetAll(message.ChannelIdsToCheck);
-
-            // add database channels to result
-            foreach (var dbChannel in dbChannels)
+            foreach (var storedChannel in storedChannels)
             {
-                response.IdentifiedChannels.Add(new ChannelIdentificationDTO()
+                identifiedChannels.Add(new ChannelIdentificationDto()
                 {
-                    ChannelId = dbChannel.ID,
-                    Channel = dbChannel,
-                    IsSailingChannel = CheckSailingTerms(sailingTerms, dbChannel),
+                    ChannelId = storedChannel.Id,
+                    Channel = storedChannel,
+                    IsSailingChannel = CheckSailingTerms(sailingTerms, storedChannel),
                     Source = "db"
                 });
             }
 
-            // extract a list of channel ids from the database channels, this we will compare to the channels
-            // that we were supposed to check and determine the channel ids that we'll have to fetch from
-            // youtube api
-            IEnumerable<string> dbChannelIds = dbChannels.Select(c => c.ID);
+            var storedChannelIds = storedChannels.Select(c => c.Id);
+            var ytFetchChannelIds = message.ChannelIdsToCheck.Except(storedChannelIds);
 
-            // determine the youtube channels to fetch via youtube api, by checking which channels from the
-            // channelIdsToCheck have not been covered in the dbChannelIds list
-            IEnumerable<string> ytFetchChannelIds = message.ChannelIdsToCheck.Except(dbChannelIds);
+            var ytChannels = await _youtubeDataService.GetChannelDetails(ytFetchChannelIds);
 
-            // fetch missing channels from youtube
-            IEnumerable<YouTubeChannel> ytChannels = await _youtubeDataService.GetChannelDetails(ytFetchChannelIds);
-
-            // add youtube channels to result
             foreach (var ytChannel in ytChannels)
             {
-                response.IdentifiedChannels.Add(new ChannelIdentificationDTO()
+                identifiedChannels.Add(new ChannelIdentificationDto()
                 {
-                    ChannelId = ytChannel.ID,
+                    ChannelId = ytChannel.Id,
                     Channel = ytChannel,
                     IsSailingChannel = CheckSailingTerms(sailingTerms, ytChannel),
                     Source = "yt"
                 });
             }
 
+            var response = new YouTubeChannelDetailResponse(identifiedChannels);
             return response;
         }
 

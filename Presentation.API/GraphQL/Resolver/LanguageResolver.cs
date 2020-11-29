@@ -4,7 +4,6 @@ using AutoMapper;
 using Core.Interfaces.Repositories;
 using GraphQL.Types;
 using Infrastructure.API.Models;
-using Microsoft.Extensions.Logging;
 using Presentation.API.GraphQL.Types;
 
 namespace Presentation.API.GraphQL.Resolver
@@ -14,17 +13,14 @@ namespace Presentation.API.GraphQL.Resolver
     {
         private readonly ILanguageRepository _languageRepository;
         private readonly IMapper _mapper;
-        private readonly ILogger<LanguageResolver> _logger;
 
         public LanguageResolver(
-            ILogger<LanguageResolver> logger,
             ILanguageRepository languageRepository,
             IMapper mapper
         )
         {
             _languageRepository = languageRepository ?? throw new ArgumentNullException("languageRepository");
             _mapper = mapper ?? throw new ArgumentNullException("mapper");
-            _logger = logger;
         }
 
         /// <summary>

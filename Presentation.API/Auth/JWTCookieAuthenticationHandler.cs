@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using ILoggerFactory = Microsoft.Extensions.Logging.ILoggerFactory;
+#pragma warning disable 1998
 
 namespace Presentation.API.Auth
 {

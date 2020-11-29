@@ -1,10 +1,10 @@
 ﻿namespace Core.Entities
 {
-    public class YouTubeChannel : DisplayItem
+    public record YouTubeChannel : DisplayItem
     {
-        public ulong ViewCount { get; set; }
-        public ulong SubscriberCount { get; set; }
-        public ulong VideoCount { get; set; }
-        public bool HiddenSubscriberCount { get; set; }
+        public ulong ViewCount { get; init; }
+        public ulong SubscriberCount { get; init; }
+        public ulong VideoCount { get; init; }
+        public bool HiddenSubscriberCount { get; init; }
     }
 }

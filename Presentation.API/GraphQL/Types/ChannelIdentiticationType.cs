@@ -1,6 +1,5 @@
 ﻿using Infrastructure.API.Models;
 using GraphQL.Types;
-using Core.Enums;
 
 namespace Presentation.API.GraphQL.Types
 {

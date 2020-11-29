@@ -1,18 +1,7 @@
-﻿using System;
-namespace Core.DTO.UseCaseResponses
+﻿namespace Core.DTO.UseCaseResponses
 {
-    public class ExtractYouTubeChannelIDResponse
+    public record ExtractYouTubeChannelIdResponse
     {
-        public string ChannelID;
-
-        public ExtractYouTubeChannelIDResponse(string channelId)
-        {
-            ChannelID = channelId;
-        }
-
-        public ExtractYouTubeChannelIDResponse()
-        {
-
-        }
+        public string ChannelId { get; init; }
     }
 }

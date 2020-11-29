@@ -3,9 +3,5 @@ using Core.Entities;
 
 namespace Core.DTO.UseCaseResponses
 {
-    public class SearchResponse
-    {
-        public List<Video> Videos;
-        public List<Channel> Channels;
-    }
+    public record SearchResponse(IReadOnlyCollection<Video> Videos, IReadOnlyCollection<Channel> Channels);
 }

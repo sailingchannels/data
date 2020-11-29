@@ -31,40 +31,50 @@ namespace Core.UseCases
         {
             // store search object
             await _searchRepository.Insert(message.Query);
-
-            var response = new SearchResponse();
-
-            // search for videos
-            response.Videos = await _videoRepository.Search(message.Query);
-            response.Channels = await _channelRepository.Search(message.Query);
-
+            
+            var videos = await _videoRepository.Search(message.Query);
+            var channels = await _channelRepository.Search(message.Query);
+            
             var neededChannelIds = new HashSet<string>();
-            Dictionary<string, Channel> channelLookup = response.Channels.ToDictionary(k => k.ID, v => v);
+            var channelLookup = channels
+                .ToDictionary(k => k.Id, v => v);
 
             // gather list of channel ids for the video results, that are
             // not yet fetched via the channel search results. we need to
             // fetch those additional channels as well and merge them into
-            // the loopup dictionary
-            foreach (var video in response.Videos)
+            // the lookup dictionary
+            foreach (var video in videos)
             {
-                if(!channelLookup.ContainsKey(video.ChannelID))
+                if (!channelLookup.ContainsKey(video.ChannelId))
                 {
-                    neededChannelIds.Add(video.ChannelID);
+                    neededChannelIds.Add(video.ChannelId);
                 }
             }
 
-            // fetch additionally needed channels
             var additionalChannels = await _channelRepository.GetAll(neededChannelIds.ToList());
 
             foreach(var additionalChannel in additionalChannels)
             {
-                channelLookup.TryAdd(additionalChannel.ID, additionalChannel);
+                channelLookup.TryAdd(additionalChannel.Id, additionalChannel);
             }
 
-            // feed channels into videos by means of lookup table
-            response.Videos.ForEach(b => b.Channel = channelLookup[b.ChannelID]);
+            var enrichedVideos = EnrichVideosWithChannel(videos, channelLookup);
 
+            var response = new SearchResponse(enrichedVideos, channels);
             return response;
+        }
+
+        private IReadOnlyCollection<Video> EnrichVideosWithChannel(
+            IEnumerable<Video> videos, 
+            Dictionary<string, Channel> channelLookup)
+        {
+            var enrichedVideos = videos.Select(video =>
+            {
+                var enrichedVideo = video with { Channel = channelLookup[video.ChannelId] };
+                return enrichedVideo;
+            });
+
+            return enrichedVideos.ToList();
         }
     }
 }

@@ -4,7 +4,7 @@ using Core.DTO.UseCaseResponses;
 namespace Core.Interfaces.UseCases
 {
     public interface IExtractYouTubeChannelIDUseCase
-        : IUseCase<ExtractYouTubeChannelIDRequest, ExtractYouTubeChannelIDResponse>
+        : IUseCase<ExtractYouTubeChannelIDRequest, ExtractYouTubeChannelIdResponse>
     {
     }
 }

@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using AutoMapper;
 using Core.DTO.UseCaseRequests;
+using Core.Entities;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.UseCases;
 using GraphQL.Types;
 using Infrastructure.API.Models;
-using Microsoft.Extensions.Logging;
 using Presentation.API.GraphQL.Types;
 
 namespace Presentation.API.GraphQL.Resolver
@@ -18,10 +19,8 @@ namespace Presentation.API.GraphQL.Resolver
         private readonly IChannelRepository _channelRepository;
         private readonly IAggregateVideoPublishTimesUseCase _aggregateVideoPublishTimesUseCase;
         private readonly IMapper _mapper;
-        private readonly ILogger<ChannelResolver> _logger;
 
         public VideoResolver(
-            ILogger<ChannelResolver> logger,
             IVideoRepository videoRepository,
             IChannelRepository channelRepository,
             IAggregateVideoPublishTimesUseCase aggregateVideoPublishTimesUseCase,
@@ -32,7 +31,6 @@ namespace Presentation.API.GraphQL.Resolver
             _channelRepository = channelRepository ?? throw new ArgumentNullException("channelRepository");
             _aggregateVideoPublishTimesUseCase = aggregateVideoPublishTimesUseCase ?? throw new ArgumentNullException(nameof(aggregateVideoPublishTimesUseCase));
             _mapper = mapper ?? throw new ArgumentNullException("mapper");
-            _logger = logger;
         }
 
         /// <summary>
@@ -49,13 +47,15 @@ namespace Presentation.API.GraphQL.Resolver
                 ),
                 resolve: async (context) => 
                 {
-                    string channelId = context.GetArgument<string>("channelId");
+                    var channelId = context.GetArgument<string>("channelId");
 
                     var video = await _videoRepository.GetLatest(channelId);
-                    video.Channel = await _channelRepository.Get(channelId);
+                    var channel = await _channelRepository.Get(channelId);
 
+                    var enrichedVideo = video with { Channel = channel};
+                    
                     // map entity to model
-                    return _mapper.Map<VideoModel>(video);
+                    return _mapper.Map<VideoModel>(enrichedVideo);
                 }
             );
 
@@ -69,7 +69,7 @@ namespace Presentation.API.GraphQL.Resolver
                 ),
                 resolve: async (context) =>
                 {
-                    string channelId = context.GetArgument<string>("channelId");
+                    var channelId = context.GetArgument<string>("channelId");
                     var channel = await _channelRepository.Get(channelId);
 
                     var videos = await _videoRepository.GetByChannel(
@@ -77,11 +77,11 @@ namespace Presentation.API.GraphQL.Resolver
                         context.GetArgument<int>("skip"),
                         context.GetArgument<int>("take")
                     );
-
-                    videos.ForEach(b => b.Channel = channel);
+                    
+                    var enrichedVideos = EnrichVideosWithChannel(videos, channel);
 
                     // map entity to model
-                    return _mapper.Map<List<VideoModel>>(videos);
+                    return _mapper.Map<List<VideoModel>>(enrichedVideos);
                 }
             );
 
@@ -93,7 +93,7 @@ namespace Presentation.API.GraphQL.Resolver
                 ),
                 resolve: async (context) =>
                 {
-                    long videoCount = await _videoRepository.CountByChannel(
+                    var videoCount = await _videoRepository.CountByChannel(
                         context.GetArgument<string>("channelId")
                     );
 
@@ -107,7 +107,7 @@ namespace Presentation.API.GraphQL.Resolver
                 "videoCountTotal",
                 resolve: async (context) =>
                 {
-                    long videoCount = await _videoRepository.Count();
+                    var videoCount = await _videoRepository.Count();
 
                     // map entity to model
                     return videoCount;
@@ -148,7 +148,7 @@ namespace Presentation.API.GraphQL.Resolver
                         // map entity to model
                         return aggregationModels;
                     }
-                    catch(Exception e)
+                    catch
                     {
                         return null;
                     }
@@ -162,6 +162,19 @@ namespace Presentation.API.GraphQL.Resolver
         /// <param name="graphQLMutation"></param>
         public void ResolveMutation(GraphQLMutation graphQLMutation)
         {
+        }
+        
+        private IReadOnlyCollection<Video> EnrichVideosWithChannel(
+            IEnumerable<Video> videos, 
+            Channel channel)
+        {
+            var enrichedVideos = videos.Select(video =>
+            {
+                var enrichedVideo = video with { Channel = channel };
+                return enrichedVideo;
+            });
+
+            return enrichedVideos.ToList();
         }
     }
 }

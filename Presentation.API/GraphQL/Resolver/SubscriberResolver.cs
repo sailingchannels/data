@@ -14,18 +14,14 @@ namespace Presentation.API.GraphQL.Resolver
     {
         private readonly ISubscriberRepository _subscriberRepository;
         private readonly IMapper _mapper;
-        private readonly ILogger<SubscriberResolver> _logger;
 
         public SubscriberResolver(
-            ILogger<SubscriberResolver> logger,
             ISubscriberRepository subscriberRepository,
             IMapper mapper
         )
         {
             _subscriberRepository = subscriberRepository ?? throw new ArgumentNullException("subscriberRepository");
-
             _mapper = mapper ?? throw new ArgumentNullException("mapper");
-            _logger = logger;
         }
 
         /// <summary>

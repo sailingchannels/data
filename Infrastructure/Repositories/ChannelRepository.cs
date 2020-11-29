@@ -46,7 +46,7 @@ namespace Infrastructure.Repositories
                 .Project<Channel>("{ _id: 1 }")
                 .ToListAsync();
 
-            return channels.Select(c => c.ID).ToList<string>();
+            return channels.Select(c => c.Id).ToList<string>();
         }
 
         public async Task<long> Count()
@@ -62,7 +62,7 @@ namespace Infrastructure.Repositories
         )
         {
             return await _col
-                .Find(c => c.Language == channelLanguage && channelIds.Contains(c.ID))
+                .Find(c => c.Language == channelLanguage && channelIds.Contains(c.Id))
                 .SortByDescending(c => c.LastUploadAt)
                 .Skip(skip)
                 .Limit(take)
@@ -72,7 +72,7 @@ namespace Infrastructure.Repositories
         public async Task<List<Channel>> GetAll(List<string> channelIds)
         {
             return await _col
-                .Find(c => channelIds.Contains(c.ID))
+                .Find(c => channelIds.Contains(c.Id))
                 .ToListAsync();
         }
 
@@ -119,7 +119,7 @@ namespace Infrastructure.Repositories
             string language)
         {
             return await _col
-                .Find(c => c.Language == language && c.Subscribers > subscriberMinValue && channelIds.Contains(c.ID))
+                .Find(c => c.Language == language && c.Subscribers > subscriberMinValue && channelIds.Contains(c.Id))
                 .Project<Channel>("{ title: 1 }")
                 .SortByDescending(c => c.LastUploadAt)
                 .FirstOrDefaultAsync();
@@ -145,27 +145,17 @@ namespace Infrastructure.Repositories
                 .Set(c => c.LastUploadAt, lastUploadTimestamp)
                 .Set(c => c.LastCrawl, DateTime.UtcNow);
 
-            await _col.UpdateOneAsync(c => c.ID == channelId, update);
+            await _col.UpdateOneAsync(c => c.Id == channelId, update);
         }
 
         public async Task<uint> GetLastUploadTimestamp(string channelId)
         {
             var channel = await _col
-                .Find(c => c.ID == channelId)
+                .Find(c => c.Id == channelId)
                 .Project<Channel>("{ lastUploadAt: 1 }")
                 .SingleOrDefaultAsync();
 
             return channel.LastUploadAt;
-        }
-
-        public async Task UpdateChannelDetails(IEnumerable<YouTubeChannel> channelDetails)
-        {
-            // Description
-            // Subscribers
-            // Videos
-
-            //await _col.UpdateManyAsync();
-            
         }
 
         #endregion

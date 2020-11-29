@@ -2,30 +2,26 @@
 
 namespace Core.DTO.UseCaseResponses
 {
-    public class IdentifySailingChannelResponse
+    public record IdentifySailingChannelResponse
     {
-        public ChannelIdentificationStatus Status { get; set; }
-        public ChannelIdentificationDTO IdentifiedChannel { get; set; }
+        public ChannelIdentificationStatus Status { get; init; }
+        public ChannelIdentificationDto IdentifiedChannel { get; init; }
 
         public IdentifySailingChannelResponse(
             ChannelIdentificationStatus status
         )
         {
             Status = status;
-            IdentifiedChannel = new ChannelIdentificationDTO()
-            {
-                Status = status
-            };
+            IdentifiedChannel = new ChannelIdentificationDto() with { Status = status };
         }
 
         public IdentifySailingChannelResponse(
             ChannelIdentificationStatus status,
-            ChannelIdentificationDTO identifiedChannel
+            ChannelIdentificationDto identifiedChannel
         )
         {
             Status = status;
-            identifiedChannel.Status = status;
-            IdentifiedChannel = identifiedChannel;
+            IdentifiedChannel = identifiedChannel with { Status = status };
         }
     }
 }

@@ -16,9 +16,9 @@ namespace Infrastructure.API
             CreateMap<Language, LanguageModel>();
             CreateMap<SearchResponse, SearchResultModel>();
             CreateMap<Topic, TopicModel>();
-            CreateMap<TopicOverviewDTO, TopicOverviewModel>();
+            CreateMap<TopicOverviewDto, TopicOverviewModel>();
             CreateMap<TopicDetailResponse, TopicDetailModel>();
-            CreateMap<ChannelIdentificationDTO, ChannelIdentificationModel>();
+            CreateMap<ChannelIdentificationDto, ChannelIdentificationModel>();
             CreateMap<DisplayItem, DisplayItemModel>();
 
             CreateMap<Subscriber, SubscriberModel>()

@@ -1,15 +1,14 @@
-﻿using System;
-using Core.Entities;
+﻿using Core.Entities;
 using Core.Enums;
 
 namespace Core.DTO
 {
-    public class ChannelIdentificationDTO
+    public record ChannelIdentificationDto()
     {
-        public string ChannelId;
-        public string Source;
-        public bool IsSailingChannel;
-        public DisplayItem Channel;
-        public ChannelIdentificationStatus Status;
+        public string ChannelId { get; init; }
+        public string Source  { get; init; }
+        public bool IsSailingChannel { get; init; }
+        public DisplayItem Channel { get; init; }
+        public ChannelIdentificationStatus Status { get; init; }
     }
 }

@@ -13,17 +13,17 @@ namespace Core.UseCases
 {
     public class IdentifySailingChannelUseCase : IIdentifySailingChannelUseCase
     {
-        private readonly IExtractYouTubeChannelIDUseCase _extractYouTubeChannelIDUseCase;
+        private readonly IExtractYouTubeChannelIDUseCase _extractYouTubeChannelIdUseCase;
         private readonly IYouTubeChannelDetailUseCase _youTubeChannelDetailUseCase;
         private readonly ISuggestionRepository _suggestionRepository;
 
         public IdentifySailingChannelUseCase(
-            IExtractYouTubeChannelIDUseCase extractYouTubeChannelIDUseCase,
+            IExtractYouTubeChannelIDUseCase extractYouTubeChannelIdUseCase,
             IYouTubeChannelDetailUseCase youTubeChannelDetailUseCase,
             ISuggestionRepository suggestionRepository
         )
         {
-            _extractYouTubeChannelIDUseCase = extractYouTubeChannelIDUseCase ?? throw new ArgumentNullException(nameof(extractYouTubeChannelIDUseCase));
+            _extractYouTubeChannelIdUseCase = extractYouTubeChannelIdUseCase ?? throw new ArgumentNullException(nameof(extractYouTubeChannelIdUseCase));
             _youTubeChannelDetailUseCase = youTubeChannelDetailUseCase ?? throw new ArgumentNullException(nameof(youTubeChannelDetailUseCase));
             _suggestionRepository = suggestionRepository ?? throw new ArgumentNullException(nameof(suggestionRepository));
         }
@@ -39,12 +39,12 @@ namespace Core.UseCases
             }
 
             // try to identify a channel id from the URL
-            var channelIDResponse = await _extractYouTubeChannelIDUseCase.Handle(
+            var channelIdResponse = await _extractYouTubeChannelIdUseCase.Handle(
                 new ExtractYouTubeChannelIDRequest(message.PossibleYouTubeChannelURL)
             );
 
             // could not identy a channel
-            if (string.IsNullOrWhiteSpace(channelIDResponse.ChannelID))
+            if (string.IsNullOrWhiteSpace(channelIdResponse.ChannelId))
             {
                 return new IdentifySailingChannelResponse(
                     ChannelIdentificationStatus.NotValid
@@ -54,7 +54,7 @@ namespace Core.UseCases
             // fetch details for youtube channel
             var channelDetails = await _youTubeChannelDetailUseCase.Handle(
                 new YouTubeChannelDetailRequest(
-                    new List<string>() { channelIDResponse.ChannelID }
+                    new List<string>() { channelIdResponse.ChannelId }
                 )
             );
 
@@ -65,14 +65,14 @@ namespace Core.UseCases
                 );
             }
 
-            ChannelIdentificationDTO channelDetail = channelDetails.IdentifiedChannels.First();
+            ChannelIdentificationDto channelDetail = channelDetails.IdentifiedChannels.First();
 
             // we discovered a newly listed channel
             if (channelDetail.Source.ToLower() == "yt")
             {
                 // check if channel has been suggested before
                 var suggestions = await _suggestionRepository.GetAny(
-                    new List<string>() { channelIDResponse.ChannelID }
+                    new List<string>() { channelIdResponse.ChannelId }
                 );
 
                 // a suggestion does already exist for this channel

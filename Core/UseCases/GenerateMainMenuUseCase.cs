@@ -16,28 +16,28 @@ namespace Core.UseCases
         {
             var menu = new List<MainMenuSection>()
             {
-                new MainMenuSection()
+                new()
                 {
                     Title = "Channels",
                     Items = new List<MainMenuItem>()
                     {
-                        new MainMenuItem("Subscribers", "/channels/subscribers"),
-                        new MainMenuItem("Views", "/channels/views"),
-                        new MainMenuItem("Last Upload", "/channels/upload"),
-                        new MainMenuItem("Founded", "/channels/founded"),
-                        new MainMenuItem("Trending", "/channels/trending")
+                        new("Subscribers", "/channels/subscribers"),
+                        new("Views", "/channels/views"),
+                        new("Last Upload", "/channels/upload"),
+                        new("Founded", "/channels/founded"),
+                        new("Trending", "/channels/trending")
                     }
                 },
-                new MainMenuSection()
+                new()
                 {
                     Title = "Menu",
                     Items = new List<MainMenuItem>()
                     {
-                        new MainMenuItem("Explore by topics", "/topics"),
-                        new MainMenuItem("Introduction", "/how-it-works"),
-                        new MainMenuItem("Suggest a channel", "/suggest"),
-                        new MainMenuItem("Contributions", "/contributions"),
-                        new MainMenuItem("Support Us", "/support-us")
+                        new("Explore by topics", "/topics"),
+                        new("Introduction", "/how-it-works"),
+                        new("Suggest a channel", "/suggest"),
+                        new("Contributions", "/contributions"),
+                        new("Support Us", "/support-us")
                     }
                 }
             };

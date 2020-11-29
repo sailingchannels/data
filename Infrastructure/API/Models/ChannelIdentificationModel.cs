@@ -1,6 +1,4 @@
-﻿using Core.Enums;
-
-namespace Infrastructure.API.Models
+﻿namespace Infrastructure.API.Models
 {
     public class ChannelIdentificationModel
     {

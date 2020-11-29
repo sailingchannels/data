@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Core.DTO;
 using Core.DTO.UseCaseRequests;
 using Core.DTO.UseCaseResponses;
-using Core.Entities;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.UseCases;
 using Microsoft.Extensions.Caching.Memory;
@@ -18,7 +17,8 @@ namespace Core.UseCases
         private ITopicRepository _topicRepository;
         private ITagRepository _tagRepository;
         private IMemoryCache _cache;
-        private const string _cacheKey = "TopicsOverview";
+        
+        private const string CacheKey = "TopicsOverview";
 
         public TopicsOverviewUseCase(
             IVideoRepository videoRepository,
@@ -42,40 +42,34 @@ namespace Core.UseCases
         /// <returns></returns>
         public async Task<TopicsOverviewResponse> Handle(TopicsOverviewRequest message)
         {
-            List<TopicOverviewDTO> topicResults;
+            List<TopicOverviewDto> topicResults;
 
-            // check if the value is in cache
-            if (!_cache.TryGetValue(_cacheKey, out topicResults))
+            if (!_cache.TryGetValue(CacheKey, out topicResults))
             {
-                topicResults = new List<TopicOverviewDTO>();
+                topicResults = new List<TopicOverviewDto>();
 
-                // read all topics
-                List<Topic> topics = await _topicRepository.GetAll(message.Language);
+                var topics = await _topicRepository.GetAll(message.Language);
 
                 foreach (var topic in topics)
                 {
-                    // find channels that have any of the tags of the topic
-                    List<string> taggedChannelIds = await _tagRepository.SearchChannels(topic.SearchTerms);
+                    var taggedChannelIds = await _tagRepository.SearchChannels(topic.SearchTerms);
 
-                    // find the channel with the latest upload
-                    Channel latestUploadChannel = await _channelRepository.GetLastUploader(
+                    var latestUploadChannel = await _channelRepository.GetLastUploader(
                         taggedChannelIds,
                         Constants.TOPICS_SUBSCRIBER_THRESHOLD,
                         message.Language);
 
                     if (latestUploadChannel == null) continue;
 
-                    // find the latest video of that channel
-                    Video latestVideo = await _videoRepository.GetLatest(latestUploadChannel.ID);
+                    var latestVideo = await _videoRepository.GetLatest(latestUploadChannel.Id);
 
                     topicResults.Add(
-                        new TopicOverviewDTO(topic, latestVideo.ID, latestUploadChannel.Title)
+                        new TopicOverviewDto(topic, latestVideo.Id, latestUploadChannel.Title)
                     );
                 }
 
-                // update cache
                 _cache.Set(
-                    _cacheKey,
+                    CacheKey,
                     topicResults,
                     new MemoryCacheEntryOptions()
                         .SetSlidingExpiration(TimeSpan.FromHours(1))

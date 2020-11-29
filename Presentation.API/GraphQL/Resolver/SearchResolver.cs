@@ -4,28 +4,23 @@ using Core.DTO.UseCaseRequests;
 using Core.Interfaces.UseCases;
 using GraphQL.Types;
 using Infrastructure.API.Models;
-using Microsoft.Extensions.Logging;
-using Microsoft.Toolkit.Extensions;
 using Presentation.API.GraphQL.Types;
 
 namespace Presentation.API.GraphQL.Resolver
 {
     public sealed class SearchResolver
-        : IResolver, ISearchResolver
+        : BaseResolver, IResolver, ISearchResolver
     {
         private readonly ISearchUseCase _searchUseCase;
         private readonly IMapper _mapper;
-        private readonly ILogger<SearchResolver> _logger;
 
         public SearchResolver(
-            ILogger<SearchResolver> logger,
             ISearchUseCase searchUseCase,
             IMapper mapper
         )
         {
             _searchUseCase = searchUseCase ?? throw new ArgumentNullException("searchUseCase");
             _mapper = mapper ?? throw new ArgumentNullException("mapper");
-            _logger = logger;
         }
 
         /// <summary>
@@ -45,15 +40,16 @@ namespace Presentation.API.GraphQL.Resolver
                     var searchResult = await _searchUseCase.Handle(new SearchRequest(
                         context.GetArgument<string>("query")
                     ));
+                    
+                    var channelsWithTruncatedDescription = 
+                        TruncateChannelDescriptions(searchResult.Channels);
 
-                    // truncate description
-                    foreach (var channel in searchResult.Channels)
-                    {
-                        channel.Description = channel.Description.Truncate(300, ellipsis: true);
-                    }
+                    var truncatedDescriptionResults = searchResult with {
+                        Channels = channelsWithTruncatedDescription
+                    };
 
                     // map entity to model
-                    return _mapper.Map<SearchResultModel>(searchResult);
+                    return _mapper.Map<SearchResultModel>(truncatedDescriptionResults);
                 }
             );
         }

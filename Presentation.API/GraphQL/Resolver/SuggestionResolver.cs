@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using AutoMapper;
+using Core.DTO;
 using Core.DTO.UseCaseRequests;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.UseCases;
@@ -16,11 +17,9 @@ namespace Presentation.API.GraphQL.Resolver
     {
         private readonly IChannelSuggestionsUseCase _channelSuggestionsUseCase;
         private readonly ISuggestionRepository _suggestionRepository;
-        private readonly ILogger<SuggestionResolver> _logger;
         private readonly IMapper _mapper;
 
         public SuggestionResolver(
-            ILogger<SuggestionResolver> logger,
             IChannelSuggestionsUseCase channelSuggestionsUseCase,
             ISuggestionRepository suggestionRepository,
             IMapper mapper
@@ -28,14 +27,13 @@ namespace Presentation.API.GraphQL.Resolver
         {
             _suggestionRepository = suggestionRepository ?? throw new ArgumentNullException("suggestionRepository");
             _channelSuggestionsUseCase = channelSuggestionsUseCase ?? throw new ArgumentNullException("channelSuggestionsUseCase");
-            _logger = logger;
             _mapper = mapper ?? throw new ArgumentNullException("mapper");
         }
 
-        public void ResolveQuery(GraphQLQuery graphQLQuery)
+        public void ResolveQuery(GraphQLQuery graphQlQuery)
         {
             // IDENTIFY CHANNELS: take a list of url hints and identify sailing channels from them
-            graphQLQuery.FieldAsync<ListGraphType<ChannelIdentificationType>>(
+            graphQlQuery.FieldAsync<ListGraphType<ChannelIdentificationType>>(
                 "channelSuggestions",
                 arguments: new QueryArguments(
                     new QueryArgument<NonNullGraphType<ListGraphType<StringGraphType>>> { Name = "channelIds" },
@@ -45,7 +43,7 @@ namespace Presentation.API.GraphQL.Resolver
                 {
                     // read user context dictionary
                     var userContext = (GraphQLUserContext)context.UserContext;
-                    string userId = userContext.GetUserId();
+                    var userId = userContext.GetUserId();
 
                     // require user to be authenticated
                     if (userId == null) return null;
@@ -58,14 +56,11 @@ namespace Presentation.API.GraphQL.Resolver
                         )
                     );
 
-                    // truncate description
-                    foreach (var channel in result.Suggestions)
-                    {
-                        channel.Channel.Description = channel.Channel.Description.Truncate(300, ellipsis: true);
-                    }
+                    var truncatedSuggestions = 
+                        TruncateChannelIdentificationDescription(result.Suggestions);
 
                     // map entity to model
-                    return _mapper.Map<List<ChannelIdentificationModel>>(result.Suggestions);
+                    return _mapper.Map<List<ChannelIdentificationModel>>(truncatedSuggestions);
                 }
             );
         }
@@ -84,7 +79,7 @@ namespace Presentation.API.GraphQL.Resolver
                     {
                         // read user context dictionary
                         var userContext = (GraphQLUserContext) context.UserContext;
-                        string userId = userContext.GetUserId();
+                        var userId = userContext.GetUserId();
 
                         // require user to be authenticated
                         if (userId == null) return false;
@@ -101,6 +96,25 @@ namespace Presentation.API.GraphQL.Resolver
                         return false;
                     }
                 });
+        }
+
+        private IReadOnlyCollection<ChannelIdentificationDto> TruncateChannelIdentificationDescription(
+            IEnumerable<ChannelIdentificationDto> suggestions)
+        {
+            var truncatedSuggestions = new List<ChannelIdentificationDto>();
+
+            foreach (var suggestion in suggestions)
+            {
+                var channelIdentification = suggestion with {
+                    Channel = suggestion.Channel with {
+                        Description = suggestion.Channel.Description.Truncate(300, true)
+                        }
+                    };
+                        
+                truncatedSuggestions.Add(channelIdentification);
+            }
+
+            return truncatedSuggestions;
         }
     }
 }

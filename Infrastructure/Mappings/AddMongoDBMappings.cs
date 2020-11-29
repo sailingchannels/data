@@ -28,7 +28,7 @@ namespace Infrastructure.Mappings
             // DISPLAY ITEM
             BsonClassMap.RegisterClassMap<DisplayItem>(cm =>
             {
-                cm.MapIdMember(c => c.ID).SetElementName("_id");
+                cm.MapIdMember(c => c.Id).SetElementName("_id");
                 cm.MapMember(c => c.Description).SetElementName("description");
                 cm.MapMember(c => c.Title).SetElementName("title");
                 cm.MapMember(c => c.Thumbnail).SetElementName("thumbnail");
@@ -69,7 +69,7 @@ namespace Infrastructure.Mappings
                 cm.MapMember(c => c.Dislikes).SetElementName("dislikes");
                 cm.MapMember(c => c.PublishedAt).SetElementName("publishedAt");
                 cm.MapMember(c => c.Likes).SetElementName("likes");
-                cm.MapMember(c => c.ChannelID).SetElementName("channel");
+                cm.MapMember(c => c.ChannelId).SetElementName("channel");
                 cm.MapMember(c => c.Comments).SetElementName("comments");
                 cm.MapMember(c => c.GeoChecked).SetElementName("geoChecked");
                 cm.MapMember(c => c.Tags).SetElementName("tags");

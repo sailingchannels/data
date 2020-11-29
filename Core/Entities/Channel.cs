@@ -3,21 +3,21 @@ using System.Collections.Generic;
 
 namespace Core.Entities
 {
-    public class Channel : DisplayItem
+    public record Channel : DisplayItem
     {
-        public int Views { get; set; }
-        public int PublishedAt { get; set; }
-        public DateTime? LastCrawl { get; set; }
-        public int Subscribers { get; set; }
-        public int VideoCount { get; set; }
-        public string Language { get; set; }
-        public string Country { get; set; }
-        public bool DetectedLanguage { get; set; }
-        public uint LastUploadAt { get; set; }
-        public bool SubscribersHidden { get; set; }
-        public ChannelPopularity Popularity { get; set; }
-        public List<string> Keywords { get; set; } = new List<string>();
-        public List<ChannelCustomLink> CustomLinks { get; set; } = new List<ChannelCustomLink>();
-        public string UploadsPlaylistId { get; set; }
+        public int Views { get; init; }
+        public int PublishedAt { get; init; }
+        public DateTime? LastCrawl { get; init; }
+        public int Subscribers { get; init; }
+        public int VideoCount { get; init; }
+        public string Language { get; init; }
+        public string Country { get; init; }
+        public bool DetectedLanguage { get; init; }
+        public uint LastUploadAt { get; init; }
+        public bool SubscribersHidden { get; init; }
+        public ChannelPopularity Popularity { get; init; }
+        public IReadOnlyCollection<string> Keywords { get; init; }
+        public IReadOnlyCollection<ChannelCustomLink> CustomLinks { get; init; }
+        public string UploadsPlaylistId { get; init; }
     }
 }

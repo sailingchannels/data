@@ -2,13 +2,5 @@
 
 namespace Core.DTO.UseCaseResponses
 {
-    public class TopicsOverviewResponse
-    {
-        public List<TopicOverviewDTO> Topics;
-
-        public TopicsOverviewResponse(List<TopicOverviewDTO> topics)
-        {
-            Topics = topics;
-        }
-    }
+    public record TopicsOverviewResponse(IReadOnlyCollection<TopicOverviewDto> Topics);
 }

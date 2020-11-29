@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading;
@@ -10,7 +9,6 @@ using Core.Interfaces.UseCases;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.ML;
-using Microsoft.ML.Data;
 using Service.PublishScheduleDetection.Entities;
 
 namespace Service.PublishScheduleDetection

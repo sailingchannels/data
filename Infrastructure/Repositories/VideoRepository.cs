@@ -60,7 +60,7 @@ namespace Infrastructure.Repositories
         public async Task<List<Video>> GetByChannel(string channelId, int skip = 0, int take = 5)
         {
             return await _col
-                .Find(v => v.ChannelID == channelId)
+                .Find(v => v.ChannelId == channelId)
                 .Project<Video>("{ title: 1, description: 1, publishedAt: 1, views: 1, likes: 1, dislikes: 1 }")
                 .SortByDescending(v => v.PublishedAt)
                 .Skip(skip)
@@ -75,7 +75,7 @@ namespace Infrastructure.Repositories
         /// <returns></returns>
         public async Task<long> CountByChannel(string channelId)
         {
-            return await _col.CountDocumentsAsync(v => v.ChannelID == channelId);
+            return await _col.CountDocumentsAsync(v => v.ChannelId == channelId);
         }
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace Infrastructure.Repositories
         public async Task<Video> GetLatest(string channelId)
         {
             return await _col
-                .Find(v => v.ChannelID == channelId)
+                .Find(v => v.ChannelId == channelId)
                 .Project<Video>("{ _id: 1 }")
                 .SortByDescending(v => v.PublishedAt)
                 .Limit(1)
@@ -127,7 +127,7 @@ namespace Infrastructure.Repositories
         public async Task<List<uint>> GetPublishedDates(string channelId)
         {
             var result = await _col
-                .Find(c => c.ChannelID == channelId)
+                .Find(c => c.ChannelId == channelId)
                 .Project<Video>("{ publishedAt: 1 }")
                 .ToListAsync();
 
@@ -143,11 +143,11 @@ namespace Infrastructure.Repositories
         public async Task<IEnumerable<string>> Exist(IEnumerable<string> ids)
         {
             var result = await _col
-                .Find(v => ids.Contains(v.ID))
+                .Find(v => ids.Contains(v.Id))
                 .Project<Video>("{ _id: 1 }")
                 .ToListAsync();
 
-            return result.Select(v => v.ID);
+            return result.Select(v => v.Id);
         }
 
         /// <summary>

@@ -2,17 +2,8 @@
 
 namespace Core.DTO
 {
-    public class TopicOverviewDTO
-    {
-        public Topic Topic { get; set; }
-        public string LatestVideoID { get; set; }
-        public string LatestChannelTitle { get; set; }
-
-        public TopicOverviewDTO(Topic topic, string latestVideoID, string latestChannelTitle)
-        {
-            Topic = topic;
-            LatestVideoID = latestVideoID;
-            LatestChannelTitle = latestChannelTitle;
-        }
-    }
+    public record TopicOverviewDto(
+        Topic Topic, 
+        string LatestVideoId, 
+        string LatestChannelTitle);
 }

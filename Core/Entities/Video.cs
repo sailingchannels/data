@@ -2,16 +2,16 @@
 
 namespace Core.Entities
 {
-    public class Video : DisplayItem
+    public record Video : DisplayItem
     {
-        public ulong Views { get; set; }
-        public ulong Dislikes { get; set; }
-        public uint PublishedAt { get; set; }
-        public ulong Likes { get; set; }
-        public string ChannelID { get; set; }
-        public ulong Comments { get; set; }
-        public bool GeoChecked { get; set; }
-        public List<string> Tags { get; set; }
-        public Channel Channel { get; set; }
+        public ulong Views { get; init; }
+        public ulong Dislikes { get; init; }
+        public uint PublishedAt { get; init; }
+        public ulong Likes { get; init; }
+        public string ChannelId { get; init; }
+        public ulong Comments { get; init; }
+        public bool GeoChecked { get; init; }
+        public IReadOnlyCollection<string> Tags { get; init; }
+        public Channel Channel { get; init; }
     }
 }

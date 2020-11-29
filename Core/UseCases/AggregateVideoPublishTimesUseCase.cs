@@ -8,14 +8,11 @@ using Core.Interfaces.UseCases;
 
 namespace Core.UseCases
 {
-    public class AggregateVideoPublishTimesUseCase
-        : IAggregateVideoPublishTimesUseCase
+    public class AggregateVideoPublishTimesUseCase : IAggregateVideoPublishTimesUseCase
     {
         private readonly IVideoRepository _videoRepository;
 
-        public AggregateVideoPublishTimesUseCase(
-            IVideoRepository videoRepository
-        )
+        public AggregateVideoPublishTimesUseCase(IVideoRepository videoRepository)
         {
             _videoRepository = videoRepository ?? throw new ArgumentNullException(nameof(videoRepository));
         }
@@ -24,22 +21,23 @@ namespace Core.UseCases
             AggregateVideoPublishTimesRequest message
         )
         {
-            List<uint> publishTimestamps = await _videoRepository.GetPublishedDates(message.ChannelID);
+            var publishTimestamps = await _videoRepository.GetPublishedDates(message.ChannelID);
 
             var aggregation = new Dictionary<DayOfWeek, Dictionary<int, int>>();
 
-            foreach(uint timestamp in publishTimestamps)
+            foreach (var timestamp in publishTimestamps)
             {
                 var date = DateTimeOffset.FromUnixTimeSeconds(timestamp);
 
-                // init dictionary
-                if (!aggregation.ContainsKey(date.DayOfWeek))
+                var shouldInitDictionary = !aggregation.ContainsKey(date.DayOfWeek);
+                if (shouldInitDictionary)
                 {
                     aggregation[date.DayOfWeek] = new Dictionary<int, int>();
                 }
 
                 // init sub-dictionary
-                if (!aggregation[date.DayOfWeek].ContainsKey(date.Hour))
+                var shouldInitSubDictionary = !aggregation[date.DayOfWeek].ContainsKey(date.Hour);
+                if (shouldInitSubDictionary)
                 {
                     aggregation[date.DayOfWeek][date.Hour] = 0;
                 }

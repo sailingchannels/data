@@ -19,6 +19,5 @@ namespace Core.Interfaces.Repositories
         Task<List<Channel>> GetIDsByLastUploadTimerange(DateTime from, DateTime until);
         Task UpdateNewVideoWasFound(string channelId, uint lastUploadTimestamp);
         Task<uint> GetLastUploadTimestamp(string channelId);
-        Task UpdateChannelDetails(IEnumerable<YouTubeChannel> channelDetails);
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-namespace Core.DTO.UseCaseRequests
+﻿namespace Core.DTO.UseCaseRequests
 {
     public class ExtractYouTubeChannelIDRequest
     {

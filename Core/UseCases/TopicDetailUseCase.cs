@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Core.DTO.UseCaseRequests;
 using Core.DTO.UseCaseResponses;
-using Core.Entities;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.UseCases;
 using Microsoft.Extensions.Caching.Memory;
@@ -48,25 +46,23 @@ namespace Core.UseCases
             // check if the value is in cache
             if (!_cache.TryGetValue(cacheKey, out response))
             {
-                response = new TopicDetailResponse();
+                var topic = await _topicRepository.Get(message.TopicID);
 
-                // get the topic based on its topic id
-                response.Topic = await _topicRepository.Get(message.TopicID);
+                var taggedChannelIds = await _tagRepository.SearchChannels(response.Topic.SearchTerms);
 
-                // find channels that have any of the tags of the topic
-                List<string> taggedChannelIds = await _tagRepository.SearchChannels(response.Topic.SearchTerms);
-
-                // read matching channels
-                response.Channels = await _channelRepository.GetAll(
+                var channels = await _channelRepository.GetAll(
                     taggedChannelIds,
                     0,
                     taggedChannelIds.Count,
                     response.Topic.Language);
 
-                // find videos
-                response.Videos = await _videoRepository.GetByTags(response.Topic.SearchTerms, 25);
-
-                // update cache
+                var videos = await _videoRepository.GetByTags(response.Topic.SearchTerms, 25);
+                
+                response = new TopicDetailResponse(
+                    topic,
+                    videos, 
+                    channels);
+                
                 _cache.Set(
                     cacheKey,
                     response,

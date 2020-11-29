@@ -27,7 +27,7 @@ namespace Core.Test
         {
             // null
             var result = await _useCase.Handle(new ExtractYouTubeChannelIDRequest(null));
-            Assert.IsNull(result.ChannelID);
+            Assert.IsNull(result.ChannelId);
         }
 
         [Test]
@@ -35,7 +35,7 @@ namespace Core.Test
         {
             // empty string
             var result = await _useCase.Handle(new ExtractYouTubeChannelIDRequest(""));
-            Assert.IsNull(result.ChannelID);
+            Assert.IsNull(result.ChannelId);
         }
 
         [Test]
@@ -43,42 +43,42 @@ namespace Core.Test
         {
             // whitespace
             var result = await _useCase.Handle(new ExtractYouTubeChannelIDRequest(" "));
-            Assert.IsNull(result.ChannelID);
+            Assert.IsNull(result.ChannelId);
         }
 
         [Test]
         public async Task TestNonValidURL()
         {
             var result = await _useCase.Handle(new ExtractYouTubeChannelIDRequest("abc"));
-            Assert.IsNull(result.ChannelID);
+            Assert.IsNull(result.ChannelId);
         }
 
         [Test]
         public async Task TestUsernameURL()
         {
             var result = await _useCase.Handle(new ExtractYouTubeChannelIDRequest("https://youtube.com/user/xyz"));
-            Assert.AreEqual(result.ChannelID, "abc");
+            Assert.AreEqual(result.ChannelId, "abc");
         }
 
         [Test]
         public async Task TestUsernameURLWithQueryParameter()
         {
             var result = await _useCase.Handle(new ExtractYouTubeChannelIDRequest("https://youtube.com/user/xyz?abc=123"));
-            Assert.AreEqual(result.ChannelID, "abc");
+            Assert.AreEqual(result.ChannelId, "abc");
         }
 
         [Test]
         public async Task TestChannelURL()
         {
             var result = await _useCase.Handle(new ExtractYouTubeChannelIDRequest("https://youtube.com/channel/abc"));
-            Assert.AreEqual(result.ChannelID, "abc");
+            Assert.AreEqual(result.ChannelId, "abc");
         }
 
         [Test]
         public async Task TestChannelURLWithQueryParameter()
         {
             var result = await _useCase.Handle(new ExtractYouTubeChannelIDRequest("https://youtube.com/channel/abc?test=test"));
-            Assert.AreEqual(result.ChannelID, "abc");
+            Assert.AreEqual(result.ChannelId, "abc");
         }
     }
 }

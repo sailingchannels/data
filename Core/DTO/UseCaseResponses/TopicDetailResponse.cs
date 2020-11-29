@@ -3,10 +3,8 @@ using Core.Entities;
 
 namespace Core.DTO.UseCaseResponses
 {
-    public class TopicDetailResponse
-    {
-        public Topic Topic;
-        public List<Video> Videos;
-        public List<Channel> Channels;
-    }
+    public record TopicDetailResponse(
+        Topic Topic, 
+        IReadOnlyCollection<Video> Videos, 
+        IReadOnlyCollection<Channel> Channels);
 }

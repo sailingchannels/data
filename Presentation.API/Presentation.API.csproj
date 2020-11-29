@@ -14,9 +14,6 @@
     <PackageReference Include="Microsoft.Toolkit" Version="6.0.0" />
     <PackageReference Include="Google.Apis.YouTube.v3" Version="1.42.0.1758" />
     <PackageReference Include="jose-jwt" Version="2.5.0" />
-    <PackageReference Include="Hangfire" Version="1.7.9" />
-    <PackageReference Include="Hangfire.AspNetCore" Version="1.7.9" />
-    <PackageReference Include="Hangfire.Dashboard.BasicAuthorization" Version="1.0.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj">

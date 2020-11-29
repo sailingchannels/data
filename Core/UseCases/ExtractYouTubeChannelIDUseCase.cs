@@ -21,12 +21,14 @@ namespace Core.UseCases
             _ytService = ytService ?? throw new ArgumentNullException(nameof(ytService));
         }
 
-        public async  Task<ExtractYouTubeChannelIDResponse> Handle(ExtractYouTubeChannelIDRequest message)
+        public async  Task<ExtractYouTubeChannelIdResponse> Handle(ExtractYouTubeChannelIDRequest message)
         {
-            var response = new ExtractYouTubeChannelIDResponse();
+            var response = new ExtractYouTubeChannelIdResponse();
 
-            // short cut, no input data available
-            if (string.IsNullOrWhiteSpace(message.YouTubeURL)) return response;
+            if (string.IsNullOrWhiteSpace(message.YouTubeURL))
+            {
+                return response;
+            }
 
             Uri youTubeURL;
             try
@@ -38,26 +40,23 @@ namespace Core.UseCases
                 return response;
             }
 
-            // guard clause
             if(youTubeURL == null)
             {
                 return response;
             }
 
-            List<string> pathParts = youTubeURL.AbsolutePath.Split('/').ToList();
+            var pathParts = youTubeURL.AbsolutePath.Split('/').ToList();
 
-            // extract channelid from username via API request
             if (message.YouTubeURL.Contains("/user/"))
             {
-                // extract username from youtube url
-                string username = FindPartAfter(pathParts, "user");
-
-                // extract channel id from username via youtube data api
-                response.ChannelID = await _ytService.GetChannelIDFromUsername(username);
+                var username = FindPartAfter(pathParts, "user");
+                var channelIdFromUsername = await _ytService.GetChannelIDFromUsername(username);
+                
+                return response with { ChannelId = channelIdFromUsername };
             }
             else if (message.YouTubeURL.Contains("/channel/"))
             {
-                response.ChannelID = FindPartAfter(pathParts, "channel");
+                return response with { ChannelId = FindPartAfter(pathParts, "channel") };
             }
 
             return response;
@@ -72,18 +71,18 @@ namespace Core.UseCases
         /// <returns></returns>
         private string FindPartAfter(List<string> parts, string predecessor)
         {
-            bool next = false;
+            var next = false;
 
-            foreach(string part in parts)
+            foreach (var part in parts)
             {
                 // predecessor was found, return the current part
-                if(next == true)
+                if (next)
                 {
                     return part;
                 }
 
                 // the next part should be returned
-                if(part == predecessor)
+                if (part == predecessor)
                 {
                     next = true;
                 }

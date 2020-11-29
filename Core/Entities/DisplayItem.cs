@@ -1,10 +1,10 @@
 ﻿namespace Core.Entities
 {
-    public abstract class DisplayItem
+    public abstract record DisplayItem
     {
-        public string ID { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public string Thumbnail { get; set; }
+        public string Id { get; init; }
+        public string Title { get; init; }
+        public string Description { get; init; }
+        public string Thumbnail { get; init; }
     }
 }

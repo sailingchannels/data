@@ -19,7 +19,7 @@ namespace Infrastructure.Mappings
                     new DateTimeOffset(src.Snippet.PublishedAt.Value).ToUnixTimeSeconds()));
 
 			CreateMap<Channel, YouTubeChannel>()
-				.ForMember(dest => dest.ID, opt => opt.MapFrom(src => src.Id))
+				.ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
 				.ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Snippet.Title))
 				.ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Snippet.Description))
 				.ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(src => src.Snippet.Thumbnails.Default__.Url))

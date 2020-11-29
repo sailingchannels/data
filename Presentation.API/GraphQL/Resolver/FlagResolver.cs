@@ -1,22 +1,18 @@
 ﻿using System;
 using Core.Interfaces.Repositories;
 using GraphQL.Types;
-using Microsoft.Extensions.Logging;
 
 namespace Presentation.API.GraphQL.Resolver
 {
     public sealed class FlagResolver : IResolver, IFlagResolver
     {
         private readonly IFlagRepository _flagRepository;
-        private readonly ILogger<FlagResolver> _logger;
 
         public FlagResolver(
-            ILogger<FlagResolver> logger,
             IFlagRepository flagRepository
         )
         {
             _flagRepository = flagRepository ?? throw new ArgumentNullException("flagRepository");
-            _logger = logger;
         }
 
         /// <summary>
@@ -35,10 +31,13 @@ namespace Presentation.API.GraphQL.Resolver
                 {
                     // read user context dictionary
                     var userContext = (GraphQLUserContext) context.UserContext;
-                    string userId = userContext.GetUserId();
+                    var userId = userContext.GetUserId();
 
                     // require user to be authenticated
-                    if (userId == null) return false;
+                    if (userId == null)
+                    {
+                        return false;
+                    }
 
                     // map entity to model
                     return await _flagRepository.FlagExists(

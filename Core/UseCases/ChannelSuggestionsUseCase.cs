@@ -1,20 +1,15 @@
 ﻿using System.Linq;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Core.DTO.UseCaseRequests;
 using Core.DTO.UseCaseResponses;
 using Core.Interfaces.UseCases;
-using Core.Entities;
 using Core.Interfaces.Repositories;
 using System;
-using Core.DTO;
 
 namespace Core.UseCases
 {
-    public class ChannelSuggestionsUseCase
-        : IChannelSuggestionsUseCase
+    public class ChannelSuggestionsUseCase : IChannelSuggestionsUseCase
     {
-
         private readonly IYouTubeChannelDetailUseCase _youTubeChannelDetailUseCase;
         private readonly ISuggestionRepository _suggestionRepository;
 
@@ -35,25 +30,26 @@ namespace Core.UseCases
                 )
             );
 
-            List<ChannelIdentificationDTO> channels = result.IdentifiedChannels;
+            var channels = result.IdentifiedChannels;
 
-            // if source filter is specified, only return matching channels
-            if (!string.IsNullOrWhiteSpace(message.Source))
+            var sourceFilterIsSpecified = !string.IsNullOrWhiteSpace(message.Source);
+            if (sourceFilterIsSpecified)
             {
                 channels = channels.Where(i => i.Source == message.Source).ToList();
             }
-
-            // get a list of all channel ids of the results
-            List<string> resultChannelIds = channels.Select(c => c.ChannelId).ToList();
+            
+            var resultChannelIds = channels.Select(c => c.ChannelId).ToList();
 
             // fetch possible suggestions of these channel ids
-            if(!string.IsNullOrWhiteSpace(message.UserId))
+            var userIdIsSpecified = !string.IsNullOrWhiteSpace(message.UserId);
+            if (userIdIsSpecified)
             {
-                List<Suggestion> suggestions = await _suggestionRepository.GetAny(message.UserId, resultChannelIds);
-                List<string> suggestionChannelIds = suggestions.Select(s => s.ID.ChannelID).ToList();
+                var suggestions = await _suggestionRepository.GetAny(message.UserId, resultChannelIds);
+                var suggestionChannelIds = suggestions.Select(s => s.ID.ChannelID).ToList();
 
-                // only include channels that are not already suggested by this user
-                channels = channels.Where(c => !suggestionChannelIds.Contains(c.ChannelId)).ToList();
+                channels = channels
+                    .Where(c => !suggestionChannelIds.Contains(c.ChannelId))
+                    .ToList();
             }
 
             return new ChannelSuggestionsResponse(channels);

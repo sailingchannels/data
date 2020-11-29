@@ -1,5 +1,4 @@
-﻿using System;
-namespace Infrastructure.API.Models
+﻿namespace Infrastructure.API.Models
 {
     public class DisplayItemModel
     {
