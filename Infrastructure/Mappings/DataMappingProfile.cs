@@ -11,10 +11,10 @@ namespace Infrastructure.Mappings
 		public DataMappingProfile()
 		{
 			CreateMap<PlaylistItem, VideoResult>()
-				.ForMember(dest => dest.ID, opt => opt.MapFrom(src => src.Snippet.ResourceId.VideoId))
+				.ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Snippet.ResourceId.VideoId))
 				.ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Snippet.Title))
 				.ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Snippet.Description))
-				.ForMember(dest => dest.ChannelID, opt => opt.MapFrom(src => src.Snippet.ChannelId))
+				.ForMember(dest => dest.ChannelId, opt => opt.MapFrom(src => src.Snippet.ChannelId))
 				.ForMember(dest => dest.PublishedAt, opt => opt.MapFrom(src =>
                     new DateTimeOffset(src.Snippet.PublishedAt.Value).ToUnixTimeSeconds()));
 

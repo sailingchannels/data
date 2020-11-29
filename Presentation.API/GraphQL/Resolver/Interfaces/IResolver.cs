@@ -2,7 +2,7 @@
 {
     public interface IResolver
     {
-        void ResolveQuery(GraphQLQuery graphQLQuery);
-        void ResolveMutation(GraphQLMutation graphQLMutation);
+        void ResolveQuery(GraphQlQuery graphQlQuery);
+        void ResolveMutation(GraphQlMutation graphQlMutation);
     }
 }

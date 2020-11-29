@@ -2,20 +2,8 @@
 
 namespace Core.Entities
 {
-    public class Language
+    public record Language(string Code)
     {
-        public string Code { get; set; }
-        public string Name
-        {
-            get
-            {
-                return new CultureInfo(Code).EnglishName;
-            }
-        }
-
-        public Language(string code)
-        {
-            Code = code;
-        }
+        public string Name => new CultureInfo(Code).EnglishName;
     }
 }

@@ -2,13 +2,13 @@
 
 namespace Core.Entities
 {
-    public class VideoStatusStatistics
+    public record VideoStatusStatistics
     {
-        public ulong Views { get; set; }
-        public ulong Likes { get; set; }
-        public ulong Dislikes { get; set; }
-        public ulong Comments { get; set; }
-        public bool IsPrivate { get; set; } = false;
-        public List<string> Tags { get; set; } = new List<string>();
+        public ulong Views { get; init; }
+        public ulong Likes { get; init; }
+        public ulong Dislikes { get; init; }
+        public ulong Comments { get; init; }
+        public bool IsPrivate { get; init; }
+        public IReadOnlyCollection<string> Tags { get; init; }
     }
 }

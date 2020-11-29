@@ -1,9 +1,9 @@
 ﻿namespace Core.Entities
 {
-    public class VideoPublishAggregationItem
+    public record VideoPublishAggregationItem
     {
-        public int DayOfTheWeek { get; set; }
-        public int HourOfTheDay { get; set; }
-        public float PublishedVideos { get; set; }
+        public int DayOfTheWeek { get; init; }
+        public int HourOfTheDay { get; init; }
+        public float PublishedVideos { get; init; }
     }
 }

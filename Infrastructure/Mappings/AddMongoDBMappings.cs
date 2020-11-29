@@ -22,7 +22,7 @@ namespace Infrastructure.Mappings
             {
                 cm.MapMember(c => c.Icon).SetElementName("icon");
                 cm.MapMember(c => c.Title).SetElementName("title");
-                cm.MapMember(c => c.URL).SetElementName("url");
+                cm.MapMember(c => c.Url).SetElementName("url");
             });
 
             // DISPLAY ITEM
@@ -56,7 +56,7 @@ namespace Infrastructure.Mappings
             // SEARCH
             BsonClassMap.RegisterClassMap<Search>(cm =>
             {
-                cm.MapIdMember(c => c.ID).SetIdGenerator(StringObjectIdGenerator.Instance);
+                cm.MapIdMember(c => c.Id).SetIdGenerator(StringObjectIdGenerator.Instance);
 
                 cm.MapMember(c => c.Query).SetElementName("q");
                 cm.MapMember(c => c.Timestamp).SetElementName("time");
@@ -76,23 +76,23 @@ namespace Infrastructure.Mappings
             });
 
             // TAG ID
-            BsonClassMap.RegisterClassMap<TagID>(cm =>
+            BsonClassMap.RegisterClassMap<TagId>(cm =>
             {
-                cm.MapMember(c => c.ChannelID).SetElementName("channel");
+                cm.MapMember(c => c.ChannelId).SetElementName("channel");
                 cm.MapMember(c => c.Tag).SetElementName("tag");
             }); 
 
             // TAG
             BsonClassMap.RegisterClassMap<Tag>(cm =>
             {
-                cm.MapIdField(c => c.ID).SetElementName("_id");
+                cm.MapIdField(c => c.Id).SetElementName("_id");
                 cm.MapMember(c => c.Popularity).SetElementName("value");
             });
 
             // TOPIC
             BsonClassMap.RegisterClassMap<Topic>(cm =>
             {
-                cm.MapIdField(c => c.ID).SetElementName("_id");
+                cm.MapIdField(c => c.Id).SetElementName("_id");
                 cm.MapMember(c => c.Description).SetElementName("description");
                 cm.MapMember(c => c.Language).SetElementName("language");
                 cm.MapMember(c => c.Title).SetElementName("title");
@@ -100,50 +100,50 @@ namespace Infrastructure.Mappings
             });
 
             // FLAG ID
-            BsonClassMap.RegisterClassMap<FlagID>(cm =>
+            BsonClassMap.RegisterClassMap<FlagId>(cm =>
             {
-                cm.MapMember(c => c.ChannelID).SetElementName("channel");
-                cm.MapMember(c => c.UserID).SetElementName("user");
+                cm.MapMember(c => c.ChannelId).SetElementName("channel");
+                cm.MapMember(c => c.UserId).SetElementName("user");
             });
 
             // FLAG
             BsonClassMap.RegisterClassMap<Flag>(cm =>
             {
-                cm.MapIdField(c => c.ID).SetElementName("_id");
+                cm.MapIdField(c => c.Id).SetElementName("_id");
                 cm.MapMember(c => c.When).SetElementName("when");
             });
 
             // SUGGESTION ID
-            BsonClassMap.RegisterClassMap<SuggestionID>(cm =>
+            BsonClassMap.RegisterClassMap<SuggestionId>(cm =>
             {
-                cm.MapMember(c => c.ChannelID).SetElementName("channel");
-                cm.MapMember(c => c.UserID).SetElementName("user");
+                cm.MapMember(c => c.ChannelId).SetElementName("channel");
+                cm.MapMember(c => c.UserId).SetElementName("user");
             });
 
             // SUGGESTION
             BsonClassMap.RegisterClassMap<Suggestion>(cm =>
             {
-                cm.MapIdField(c => c.ID).SetElementName("_id");
+                cm.MapIdField(c => c.Id).SetElementName("_id");
                 cm.MapMember(c => c.When).SetElementName("when");
             });
 
             // SAILING TERM
             BsonClassMap.RegisterClassMap<SailingTerm>(cm =>
             {
-                cm.MapIdField(c => c.ID).SetElementName("_id");
+                cm.MapIdField(c => c.Id).SetElementName("_id");
             });
 
             // SUBSCRIBER ID
-            BsonClassMap.RegisterClassMap<SubscriberID>(cm =>
+            BsonClassMap.RegisterClassMap<SubscriberId>(cm =>
             {
-                cm.MapMember(c => c.ChannelID).SetElementName("channel");
+                cm.MapMember(c => c.ChannelId).SetElementName("channel");
                 cm.MapMember(c => c.Date).SetElementName("date");
             });
 
             // SUBSCRIBER
             BsonClassMap.RegisterClassMap<Subscriber>(cm =>
             {
-                cm.MapIdField(c => c.ID).SetElementName("_id");
+                cm.MapIdField(c => c.Id).SetElementName("_id");
                 cm.MapMember(c => c.Date).SetElementName("date");
                 cm.MapMember(c => c.Year).SetElementName("year");
                 cm.MapMember(c => c.Month).SetElementName("month");

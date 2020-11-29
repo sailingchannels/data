@@ -5,9 +5,9 @@ using System.Linq;
 
 namespace Presentation.API.GraphQL
 {
-    public sealed class GraphQLMutation : ObjectGraphType
+    public sealed class GraphQlMutation : ObjectGraphType
     {
-        public GraphQLMutation(IServiceProvider serviceProvider)
+        public GraphQlMutation(IServiceProvider serviceProvider)
         {
             var type = typeof(IResolver);
 

@@ -3,7 +3,7 @@ using System.Text.Json;
 
 namespace Presentation.API.GraphQL
 {
-    public sealed class GraphQLParameter
+    public sealed class GraphQlParameter
     {
         public string OperationName { get; set; }
         public string NamedQuery { get; set; }

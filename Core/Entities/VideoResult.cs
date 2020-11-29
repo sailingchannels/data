@@ -1,12 +1,12 @@
 ﻿namespace Core.Entities
 {
-    public class VideoResult
+    public record VideoResult
     {
-        public string ID { get; set; }
-        public string ChannelID { get; set; }
-        public string ChannelTitle { get; set; }
-        public string Description { get; set; }
-        public uint PublishedAt { get; set; }
-        public string Title { get; set; }
+        public string Id { get; init; }
+        public string ChannelId { get; init; }
+        public string ChannelTitle { get; init; }
+        public string Description { get; init; }
+        public uint PublishedAt { get; init; }
+        public string Title { get; init; }
     }
 }

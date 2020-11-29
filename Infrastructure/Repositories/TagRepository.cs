@@ -25,7 +25,7 @@ namespace Infrastructure.Repositories
         public async Task<List<Tag>> GetByChannel(string channelId)
         {
             return await _col
-                .Find(t => t.ID.ChannelID == channelId && t.Popularity > 1)
+                .Find(t => t.Id.ChannelId == channelId && t.Popularity > 1)
                 .SortByDescending(f => f.Popularity)
                 .Limit(15)
                 .ToListAsync();
@@ -37,7 +37,7 @@ namespace Infrastructure.Repositories
         /// </summary>
         /// <param name="tags"></param>
         /// <returns></returns>
-        public async Task<List<string>> SearchChannels(List<string> tags)
+        public async Task<List<string>> SearchChannels(IReadOnlyCollection<string> tags)
         {
             // construct the search query
             var query = new BsonDocument()

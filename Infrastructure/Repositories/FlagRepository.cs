@@ -25,10 +25,10 @@ namespace Infrastructure.Repositories
         {
             var flag = new Flag()
             {
-                ID = new FlagID()
+                Id = new FlagId()
                 {
-                    ChannelID = channelId,
-                    UserID = userId
+                    ChannelId = channelId,
+                    UserId = userId
                 },
                 When = DateTime.UtcNow
             };
@@ -45,7 +45,7 @@ namespace Infrastructure.Repositories
         public async Task<bool> FlagExists(string channelId, string userId)
         {
             return (await _col
-                .CountDocumentsAsync(t => t.ID.ChannelID == channelId && t.ID.UserID == userId)) > 0;
+                .CountDocumentsAsync(t => t.Id.ChannelId == channelId && t.Id.UserId == userId)) > 0;
         }
     }
 }

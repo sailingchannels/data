@@ -108,7 +108,7 @@ namespace Infrastructure.Repositories
         /// <param name="tags"></param>
         /// <param name="take"></param>
         /// <returns></returns>
-        public async Task<List<Video>> GetByTags(List<string> tags, int take = 50)
+        public async Task<List<Video>> GetByTags(IReadOnlyCollection<string> tags, int take = 50)
         {
             var filter = Builders<Video>.Filter.ElemMatch(x => x.Tags, x => tags.Contains(x));
 

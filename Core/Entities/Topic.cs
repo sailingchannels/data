@@ -2,12 +2,12 @@
 
 namespace Core.Entities
 {
-    public class Topic
+    public record Topic
     {
-        public string ID { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public string Language { get; set; }
-        public List<string> SearchTerms { get; set; } = new List<string>();
+        public string Id { get; init; }
+        public string Title { get; init; }
+        public string Description { get; init; }
+        public string Language { get; init; }
+        public IReadOnlyCollection<string> SearchTerms { get; init; }
     }
 }

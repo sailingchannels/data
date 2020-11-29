@@ -17,9 +17,9 @@ namespace Presentation.API.DI
             #region GraphQL
 
             builder.RegisterType<DocumentExecuter>().As<IDocumentExecuter>();
-            builder.RegisterType<GraphQLSchema>().As<ISchema>();
-            builder.RegisterType<GraphQLQuery>();
-            builder.RegisterType<GraphQLMutation>();
+            builder.RegisterType<GraphQlSchema>().As<ISchema>();
+            builder.RegisterType<GraphQlQuery>();
+            builder.RegisterType<GraphQlMutation>();
             builder.Register<Func<Type, GraphType>>(c =>
             {
                 var context = c.Resolve<IComponentContext>();

@@ -30,7 +30,7 @@ namespace Presentation.API.GraphQL.Resolver
             _mapper = mapper ?? throw new ArgumentNullException("mapper");
         }
 
-        public void ResolveQuery(GraphQLQuery graphQlQuery)
+        public void ResolveQuery(GraphQlQuery graphQlQuery)
         {
             // IDENTIFY CHANNELS: take a list of url hints and identify sailing channels from them
             graphQlQuery.FieldAsync<ListGraphType<ChannelIdentificationType>>(
@@ -42,7 +42,7 @@ namespace Presentation.API.GraphQL.Resolver
                 resolve: async (context) =>
                 {
                     // read user context dictionary
-                    var userContext = (GraphQLUserContext)context.UserContext;
+                    var userContext = (GraphQlUserContext)context.UserContext;
                     var userId = userContext.GetUserId();
 
                     // require user to be authenticated
@@ -65,10 +65,10 @@ namespace Presentation.API.GraphQL.Resolver
             );
         }
 
-        public void ResolveMutation(GraphQLMutation graphQLMutation)
+        public void ResolveMutation(GraphQlMutation graphQlMutation)
         {
             // SUGGEST CHANNEL
-            graphQLMutation.FieldAsync<BooleanGraphType>(
+            graphQlMutation.FieldAsync<BooleanGraphType>(
                 "suggestChannel",
                 arguments: new QueryArguments(
                     new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "channelId" }
@@ -78,7 +78,7 @@ namespace Presentation.API.GraphQL.Resolver
                     try
                     {
                         // read user context dictionary
-                        var userContext = (GraphQLUserContext) context.UserContext;
+                        var userContext = (GraphQlUserContext) context.UserContext;
                         var userId = userContext.GetUserId();
 
                         // require user to be authenticated

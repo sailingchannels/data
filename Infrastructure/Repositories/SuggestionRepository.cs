@@ -24,7 +24,7 @@ namespace Infrastructure.Repositories
         public async Task<List<Suggestion>> GetAny(string userId, List<string> channelIds)
         {
             return await _col
-                .Find(c => c.ID.UserID == userId && channelIds.Contains(c.ID.ChannelID))
+                .Find(c => c.Id.UserId == userId && channelIds.Contains(c.Id.ChannelId))
                 .ToListAsync();
         }
 
@@ -36,7 +36,7 @@ namespace Infrastructure.Repositories
         public async Task<List<Suggestion>> GetAny(List<string> channelIds)
         {
             return await _col
-                .Find(c => channelIds.Contains(c.ID.ChannelID))
+                .Find(c => channelIds.Contains(c.Id.ChannelId))
                 .ToListAsync();
         }
 
@@ -50,10 +50,10 @@ namespace Infrastructure.Repositories
         {
             var flag = new Suggestion()
             {
-                ID = new SuggestionID()
+                Id = new SuggestionId()
                 {
-                    ChannelID = channelId,
-                    UserID = userId
+                    ChannelId = channelId,
+                    UserId = userId
                 },
                 When = DateTime.UtcNow
             };

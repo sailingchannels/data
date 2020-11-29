@@ -32,7 +32,7 @@ namespace Presentation.API.GraphQL.Resolver
         /// Resolves all queries on guest accesses
         /// </summary>
         /// <param name="graphQlQuery"></param>
-        public void ResolveQuery(GraphQLQuery graphQlQuery)
+        public void ResolveQuery(GraphQlQuery graphQlQuery)
         {
             // TOPICS OVERVIEW
             graphQlQuery.FieldAsync<ListGraphType<TopicOverviewType>>(
@@ -76,8 +76,8 @@ namespace Presentation.API.GraphQL.Resolver
         /// <summary>
         /// Resolves all mutations on guest accesses.
         /// </summary>
-        /// <param name="graphQLMutation"></param>
-        public void ResolveMutation(GraphQLMutation graphQLMutation)
+        /// <param name="graphQlMutation"></param>
+        public void ResolveMutation(GraphQlMutation graphQlMutation)
         {
         }
     }

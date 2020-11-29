@@ -36,11 +36,11 @@ namespace Presentation.API.GraphQL.Resolver
         /// <summary>
         /// Resolves all queries on guest accesses
         /// </summary>
-        /// <param name="graphQLQuery"></param>
-        public void ResolveQuery(GraphQLQuery graphQLQuery)
+        /// <param name="graphQlQuery"></param>
+        public void ResolveQuery(GraphQlQuery graphQlQuery)
         {
             // LATEST VIDEO: returns the latest video of a channel
-            graphQLQuery.FieldAsync<VideoType>(
+            graphQlQuery.FieldAsync<VideoType>(
                 "latestVideo",
                 arguments: new QueryArguments(
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "channelId" }
@@ -60,7 +60,7 @@ namespace Presentation.API.GraphQL.Resolver
             );
 
             // VIDEOS: returns all videos of a certain channel
-            graphQLQuery.FieldAsync<ListGraphType<VideoType>>(
+            graphQlQuery.FieldAsync<ListGraphType<VideoType>>(
                 "videos",
                 arguments: new QueryArguments(
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "channelId" },
@@ -86,7 +86,7 @@ namespace Presentation.API.GraphQL.Resolver
             );
 
             // VIDEOS: returns all videos of a certain channel
-            graphQLQuery.FieldAsync<IntGraphType>(
+            graphQlQuery.FieldAsync<IntGraphType>(
                 "videoCount",
                 arguments: new QueryArguments(
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "channelId" }
@@ -103,7 +103,7 @@ namespace Presentation.API.GraphQL.Resolver
             );
 
             // VIDEO COUNT TOTAL
-            graphQLQuery.FieldAsync<IntGraphType>(
+            graphQlQuery.FieldAsync<IntGraphType>(
                 "videoCountTotal",
                 resolve: async (context) =>
                 {
@@ -115,7 +115,7 @@ namespace Presentation.API.GraphQL.Resolver
             );
 
             // VIDEO PUBLISH DISTRIBUTION
-            graphQLQuery.FieldAsync<ListGraphType<VideoPublishAggregationItemType>>(
+            graphQlQuery.FieldAsync<ListGraphType<VideoPublishAggregationItemType>>(
                 "videoPublishDistribution",
                 arguments: new QueryArguments(
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "channelId" }
@@ -159,8 +159,8 @@ namespace Presentation.API.GraphQL.Resolver
         /// <summary>
         /// Resolves all mutations on guest accesses.
         /// </summary>
-        /// <param name="graphQLMutation"></param>
-        public void ResolveMutation(GraphQLMutation graphQLMutation)
+        /// <param name="graphQlMutation"></param>
+        public void ResolveMutation(GraphQlMutation graphQlMutation)
         {
         }
         

@@ -1,13 +1,9 @@
 ﻿namespace Core.Entities
 {
-    public class ChannelPopularity
+    public record ChannelPopularity
     {
-        public ChannelPopularity()
-        {
-        }
-
-        public double Total { get; set; }
-        public double Subscribers { get; set; }
-        public double Views { get; set; }
+        public double Total { get; init; }
+        public double Subscribers { get; init; }
+        public double Views { get; init; }
     }
 }

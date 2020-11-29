@@ -4,7 +4,7 @@ using Presentation.API.Auth;
 
 namespace Presentation.API.GraphQL
 {
-    public class GraphQLUserContext : Dictionary<string, object>
+    public class GraphQlUserContext : Dictionary<string, object>
     {
         /// <summary>
         /// Reads the user id or null if not available

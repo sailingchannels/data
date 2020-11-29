@@ -36,7 +36,7 @@ namespace Infrastructure.Repositories
         public async Task<Topic> Get(string id)
         {
             return await _col
-                .Find(t => t.ID == id)
+                .Find(t => t.Id == id)
                 .SingleOrDefaultAsync();
         }
     }

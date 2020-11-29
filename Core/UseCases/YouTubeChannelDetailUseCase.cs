@@ -80,7 +80,7 @@ namespace Core.UseCases
 
             foreach (var term in terms)
             {
-                if (body.Contains(term.ID))
+                if (body.Contains(term.Id))
                 {
                     return true;
                 }

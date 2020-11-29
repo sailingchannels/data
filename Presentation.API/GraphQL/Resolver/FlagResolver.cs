@@ -18,11 +18,11 @@ namespace Presentation.API.GraphQL.Resolver
         /// <summary>
         /// Resolves all queries on guest accesses
         /// </summary>
-        /// <param name="graphQLQuery"></param>
-        public void ResolveQuery(GraphQLQuery graphQLQuery)
+        /// <param name="graphQlQuery"></param>
+        public void ResolveQuery(GraphQlQuery graphQlQuery)
         {
             // LANGUAGES: a list of all lang codes
-            graphQLQuery.FieldAsync<BooleanGraphType>(
+            graphQlQuery.FieldAsync<BooleanGraphType>(
                 "flagExists",
                 arguments: new QueryArguments(
                     new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "channelId" }
@@ -30,7 +30,7 @@ namespace Presentation.API.GraphQL.Resolver
                 resolve: async (context) =>
                 {
                     // read user context dictionary
-                    var userContext = (GraphQLUserContext) context.UserContext;
+                    var userContext = (GraphQlUserContext) context.UserContext;
                     var userId = userContext.GetUserId();
 
                     // require user to be authenticated
@@ -51,11 +51,11 @@ namespace Presentation.API.GraphQL.Resolver
         /// <summary>
         /// Resolves all mutations on guest accesses.
         /// </summary>
-        /// <param name="graphQLMutation"></param>
-        public void ResolveMutation(GraphQLMutation graphQLMutation)
+        /// <param name="graphQlMutation"></param>
+        public void ResolveMutation(GraphQlMutation graphQlMutation)
         {
             // FLAG CHANNEL
-            graphQLMutation.FieldAsync<BooleanGraphType>(
+            graphQlMutation.FieldAsync<BooleanGraphType>(
                 "flagChannel",
                 arguments: new QueryArguments(
                     new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "channelId" }
@@ -63,7 +63,7 @@ namespace Presentation.API.GraphQL.Resolver
                 resolve: async (context) =>
                 {
                     // read user context dictionary
-                    var userContext = (GraphQLUserContext)context.UserContext;
+                    var userContext = (GraphQlUserContext)context.UserContext;
                     string userId = userContext.GetUserId();
 
                     // require user to be authenticated

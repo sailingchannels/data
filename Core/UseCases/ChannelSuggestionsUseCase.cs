@@ -45,7 +45,7 @@ namespace Core.UseCases
             if (userIdIsSpecified)
             {
                 var suggestions = await _suggestionRepository.GetAny(message.UserId, resultChannelIds);
-                var suggestionChannelIds = suggestions.Select(s => s.ID.ChannelID).ToList();
+                var suggestionChannelIds = suggestions.Select(s => s.Id.ChannelId).ToList();
 
                 channels = channels
                     .Where(c => !suggestionChannelIds.Contains(c.ChannelId))

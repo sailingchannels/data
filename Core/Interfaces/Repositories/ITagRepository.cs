@@ -7,6 +7,6 @@ namespace Core.Interfaces.Repositories
     public interface ITagRepository
     {
         Task<List<Tag>> GetByChannel(string channelId);
-        Task<List<string>> SearchChannels(List<string> tags);
+        Task<List<string>> SearchChannels(IReadOnlyCollection<string> tags);
     }
 }

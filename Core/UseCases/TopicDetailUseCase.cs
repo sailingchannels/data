@@ -15,7 +15,7 @@ namespace Core.UseCases
         private ITopicRepository _topicRepository;
         private ITagRepository _tagRepository;
         private IMemoryCache _cache;
-        private const string _cacheKeyPrefix = "TopicDetail";
+        private const string CacheKeyPrefix = "TopicDetail";
 
         public TopicDetailUseCase(
             IVideoRepository videoRepository,
@@ -41,7 +41,7 @@ namespace Core.UseCases
         {
             TopicDetailResponse response;
 
-            string cacheKey = $"{_cacheKeyPrefix}.{message.TopicID}";
+            string cacheKey = $"{CacheKeyPrefix}.{message.TopicID}";
 
             // check if the value is in cache
             if (!_cache.TryGetValue(cacheKey, out response))

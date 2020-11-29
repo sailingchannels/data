@@ -22,8 +22,8 @@ namespace Infrastructure.API
             CreateMap<DisplayItem, DisplayItemModel>();
 
             CreateMap<Subscriber, SubscriberModel>()
-                .ForMember(dest => dest.ChannelID, opt => opt.MapFrom(src => src.ID.ChannelID))
-                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.ID.Date));
+                .ForMember(dest => dest.ChannelID, opt => opt.MapFrom(src => src.Id.ChannelId))
+                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Id.Date));
         }
     }
 }

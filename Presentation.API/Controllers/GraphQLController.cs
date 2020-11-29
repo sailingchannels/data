@@ -16,13 +16,13 @@ namespace Presentation.API.Controllers
     public class GraphQLController : Controller
     {
         private readonly ILogger<GraphQLController> _logger;
-        private readonly GraphQLQuery _graphQLQuery;
+        private readonly GraphQlQuery _graphQLQuery;
         private readonly IDocumentExecuter _documentExecuter;
         private readonly ISchema _schema;
 
         public GraphQLController(
             ILogger<GraphQLController> logger, 
-            GraphQLQuery graphQLQuery, 
+            GraphQlQuery graphQLQuery, 
             IDocumentExecuter documentExecuter, 
             ISchema schema)
         {
@@ -38,7 +38,7 @@ namespace Presentation.API.Controllers
         /// <param name="query"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] IList<GraphQLParameter> queries)
+        public async Task<IActionResult> Post([FromBody] IList<GraphQlParameter> queries)
         {
             var results = new List<ExecutionResult>();
 

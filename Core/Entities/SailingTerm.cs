@@ -1,7 +1,7 @@
 ﻿namespace Core.Entities
 {
-    public class SailingTerm
+    public record SailingTerm
     {
-        public string ID { get; set; }
+        public string Id { get; init; }
     }
 }

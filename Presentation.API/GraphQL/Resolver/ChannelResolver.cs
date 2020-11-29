@@ -34,7 +34,7 @@ namespace Presentation.API.GraphQL.Resolver
         /// Resolves all queries on guest accesses
         /// </summary>
         /// <param name="graphQlQuery"></param>
-        public void ResolveQuery(GraphQLQuery graphQlQuery)
+        public void ResolveQuery(GraphQlQuery graphQlQuery)
         {
             // GUEST ACCESSES: list of all guest access entries
             graphQlQuery.FieldAsync<ListGraphType<ChannelType>>(
@@ -124,8 +124,8 @@ namespace Presentation.API.GraphQL.Resolver
         /// <summary>
         /// Resolves all mutations on guest accesses.
         /// </summary>
-        /// <param name="graphQLMutation"></param>
-        public void ResolveMutation(GraphQLMutation graphQLMutation)
+        /// <param name="graphQlMutation"></param>
+        public void ResolveMutation(GraphQlMutation graphQlMutation)
         {
         }
     }

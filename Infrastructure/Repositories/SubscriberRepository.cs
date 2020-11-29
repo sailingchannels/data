@@ -28,7 +28,7 @@ namespace Infrastructure.Repositories
             days = Math.Min(days, 30);
 
             return await _col
-                .Find(s => s.ID.ChannelID == channelId && s.Date >= DateTime.UtcNow.AddDays(-1 * days))
+                .Find(s => s.Id.ChannelId == channelId && s.Date >= DateTime.UtcNow.AddDays(-1 * days))
                 .Project<Subscriber>("{ month: 0, year: 0, day: 0, date: 0 }")
                 .SortBy(s => s.Date)
                 .ToListAsync();

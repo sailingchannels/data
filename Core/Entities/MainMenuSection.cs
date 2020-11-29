@@ -2,9 +2,9 @@
 
 namespace Core.Entities
 {
-    public class MainMenuSection
+    public record MainMenuSection
     {
-        public string Title { get; set; }
-        public List<MainMenuItem> Items { get; set; } = new List<MainMenuItem>();
+        public string Title { get; init; }
+        public IReadOnlyCollection<MainMenuItem> Items { get; init; }
     }
 }

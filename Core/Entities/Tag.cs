@@ -1,14 +1,14 @@
 ﻿namespace Core.Entities
 {
-    public class TagID
+    public record TagId
     {
-        public string ChannelID { get; set; }
-        public string Tag { get; set; }
+        public string ChannelId { get; init; }
+        public string Tag { get; init; }
     }
 
-    public class Tag
+    public record Tag
     {
-        public TagID ID { get; set; }
-        public double Popularity { get; set; }
+        public TagId Id { get; init; }
+        public double Popularity { get; init; }
     }
 }

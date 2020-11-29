@@ -2,10 +2,10 @@
 
 namespace Core.Entities
 {
-    public class Search
+    public record Search
     {
-        public string ID { get; set; }
-        public string Query { get; set; }
-        public DateTime Timestamp { get; set; }
+        public string Id { get; init; }
+        public string Query { get; init; }
+        public DateTime Timestamp { get; init; }
     }
 }

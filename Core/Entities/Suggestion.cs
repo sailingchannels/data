@@ -2,15 +2,15 @@
 
 namespace Core.Entities
 {
-    public class FlagID
+    public record FlagId
     {
-        public string ChannelID { get; set; }
-        public string UserID { get; set; }
+        public string ChannelId { get; init; }
+        public string UserId { get; init; }
     }
 
-    public class Flag
+    public record Flag
     {
-        public FlagID ID { get; set; }
-        public DateTime When { get; set; }
+        public FlagId Id { get; init; }
+        public DateTime When { get; init; }
     }
 }

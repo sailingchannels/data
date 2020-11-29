@@ -1,9 +1,9 @@
 ﻿namespace Core.Entities
 {
-    public class ChannelCustomLink
+    public record ChannelCustomLink
     {
-        public string URL { get; set; }
-        public string Icon { get; set; }
-        public string Title { get; set; }  
+        public string Url { get; init; }
+        public string Icon { get; init; }
+        public string Title { get; init; }  
     }
 }
