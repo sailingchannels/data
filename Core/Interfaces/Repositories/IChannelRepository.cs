@@ -15,5 +15,10 @@ namespace Core.Interfaces.Repositories
         Task<List<Channel>> Search(string q, string language = "en");
         Task<List<Channel>> GetAll(List<string> channelIds);
         Task<long> Count();
+        Task<List<string>> GetAllChannelIds();
+        Task<List<Channel>> GetIDsByLastUploadTimerange(DateTime from, DateTime until);
+        Task UpdateNewVideoWasFound(string channelId, uint lastUploadTimestamp);
+        Task<uint> GetLastUploadTimestamp(string channelId);
+        Task UpdateChannelDetails(IEnumerable<YouTubeChannel> channelDetails);
     }
 }

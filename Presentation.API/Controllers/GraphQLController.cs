@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -58,8 +59,11 @@ namespace Presentation.API.Controllers
 
                 if (result.Errors?.Count > 0)
                 {
-                    _logger.LogError(JsonSerializer.Serialize(result.Errors));
-                    return BadRequest(result.Errors);
+                    // prepare error messages for logging and returning
+                    var errors = result.Errors.Select(e => e.ToString()).ToList();
+                    _logger.LogError(JsonSerializer.Serialize(errors));
+
+                    return BadRequest(errors);
                 }
 
                 results.Add(result);

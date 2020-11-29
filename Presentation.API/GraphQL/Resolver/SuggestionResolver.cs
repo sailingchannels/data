@@ -8,7 +8,6 @@ using GraphQL.Types;
 using Infrastructure.API.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Toolkit.Extensions;
-using Presentation.API.Auth;
 using Presentation.API.GraphQL.Types;
 
 namespace Presentation.API.GraphQL.Resolver
@@ -45,8 +44,11 @@ namespace Presentation.API.GraphQL.Resolver
                 resolve: async (context) =>
                 {
                     // read user context dictionary
-                    var userContext = (Dictionary<string, object>)context.UserContext;
-                    string userId = Convert.ToString(userContext[ClaimTypes.UserId]);
+                    var userContext = (GraphQLUserContext)context.UserContext;
+                    string userId = userContext.GetUserId();
+
+                    // require user to be authenticated
+                    if (userId == null) return null;
 
                     var result = await _channelSuggestionsUseCase.Handle(
                         new ChannelSuggestionsRequest(
@@ -81,8 +83,11 @@ namespace Presentation.API.GraphQL.Resolver
                     try
                     {
                         // read user context dictionary
-                        var userContext = (Dictionary<string, object>)context.UserContext;
-                        string userId = Convert.ToString(userContext[ClaimTypes.UserId]);
+                        var userContext = (GraphQLUserContext) context.UserContext;
+                        string userId = userContext.GetUserId();
+
+                        // require user to be authenticated
+                        if (userId == null) return false;
 
                         await _suggestionRepository.AddSuggestion(
                             context.GetArgument<string>("channelId"),

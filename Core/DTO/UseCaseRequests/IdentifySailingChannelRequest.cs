@@ -3,12 +3,10 @@
     public class IdentifySailingChannelRequest
     {
         public string PossibleYouTubeChannelURL { get; private set; }
-        public string UserId { get; private set; }
 
-        public IdentifySailingChannelRequest(string possibleYouTubeChannelURL, string userId)
+        public IdentifySailingChannelRequest(string possibleYouTubeChannelURL)
         {
             PossibleYouTubeChannelURL = possibleYouTubeChannelURL;
-            UserId = userId;
         }
     }
 }

@@ -56,14 +56,14 @@ namespace Core.UseCases
             // extract a list of channel ids from the database channels, this we will compare to the channels
             // that we were supposed to check and determine the channel ids that we'll have to fetch from
             // youtube api
-            List<string> dbChannelIds = dbChannels.Select(c => c.ID).ToList();
+            IEnumerable<string> dbChannelIds = dbChannels.Select(c => c.ID);
 
             // determine the youtube channels to fetch via youtube api, by checking which channels from the
             // channelIdsToCheck have not been covered in the dbChannelIds list
-            List<string> ytFetchChannelIds = message.ChannelIdsToCheck.Except(dbChannelIds).ToList();
+            IEnumerable<string> ytFetchChannelIds = message.ChannelIdsToCheck.Except(dbChannelIds);
 
             // fetch missing channels from youtube
-            List<YouTubeChannel> ytChannels = await _youtubeDataService.GetSnippets(ytFetchChannelIds);
+            IEnumerable<YouTubeChannel> ytChannels = await _youtubeDataService.GetChannelDetails(ytFetchChannelIds);
 
             // add youtube channels to result
             foreach (var ytChannel in ytChannels)

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using AutoMapper;
 using Core.DTO.UseCaseRequests;
 using Core.Interfaces.UseCases;

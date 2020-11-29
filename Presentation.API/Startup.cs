@@ -1,13 +1,12 @@
 using Autofac;
-using AutoMapper;
 using Infrastructure;
-using Infrastructure.API;
+using Infrastructure.Mappings;
+using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Presentation.API.Auth;
 using Presentation.API.DI;
 
@@ -67,7 +66,10 @@ namespace Presentation.API
             services.AddMongoDB();
 
             // add automapper
-            services.AddAutoMapper(typeof(APIModelsMappingProfile));
+            services.AddDataMappings();
+            
+            // inject youtube api
+            services.AddYoutubeAPI();
 
             // allow access to httpcontext via DI
             services.AddHttpContextAccessor();

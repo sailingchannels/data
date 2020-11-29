@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using AutoMapper;
-using Core.DTO.UseCaseRequests;
 using Core.Interfaces.Repositories;
-using Core.Interfaces.UseCases;
 using GraphQL.Types;
 using Infrastructure.API.Models;
 using Microsoft.Extensions.Logging;
-using Microsoft.Toolkit.Extensions;
 using Presentation.API.GraphQL.Types;
 
 namespace Presentation.API.GraphQL.Resolver

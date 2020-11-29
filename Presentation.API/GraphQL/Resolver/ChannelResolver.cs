@@ -9,7 +9,6 @@ using GraphQL.Types;
 using Infrastructure.API.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Toolkit.Extensions;
-using Presentation.API.Auth;
 using Presentation.API.GraphQL.Types;
 
 namespace Presentation.API.GraphQL.Resolver
@@ -105,14 +104,9 @@ namespace Presentation.API.GraphQL.Resolver
                 ),
                 resolve: async (context) =>
                 {
-                    // read user context dictionary
-                    var userContext = (Dictionary<string, object>)context.UserContext;
-                    string userId = Convert.ToString(userContext[ClaimTypes.UserId]);
-
                     var result = await _identifySailingChannelUseCase.Handle(
                         new IdentifySailingChannelRequest(
-                            context.GetArgument<string>("channelUrlHint"),
-                            userId
+                            context.GetArgument<string>("channelUrlHint")
                         )
                     );
 

@@ -12,5 +12,8 @@ namespace Core.Interfaces.Repositories
         Task<Video> GetLatest(string channelId);
         Task<List<Video>> GetByTags(List<string> tags, int take = 50);
         Task<long> Count();
+        Task<List<uint>> GetPublishedDates(string channelId);
+        Task<IEnumerable<string>> Exist(IEnumerable<string> ids);
+        Task Insert(IEnumerable<Video> videos);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -22,14 +23,6 @@ namespace Infrastructure.Repositories
 
         #region Public Methods
 
-        /// <summary>
-        /// Reads channels based on filter parameter
-        /// </summary>
-        /// <param name="sortBy"></param>
-        /// <param name="skip"></param>
-        /// <param name="take"></param>
-        /// <param name="channelLanguage"></param>
-        /// <returns></returns>
         public async Task<List<Channel>> GetAll(
             ChannelSorting sortBy,
             int skip = 0,
@@ -46,24 +39,21 @@ namespace Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        /// <summary>
-        /// Count all channels
-        /// </summary>
-        /// <returns></returns>
+        public async Task<List<string>> GetAllChannelIds()
+        {
+            var channels = await _col
+                .Find(new BsonDocument())
+                .Project<Channel>("{ _id: 1 }")
+                .ToListAsync();
+
+            return channels.Select(c => c.ID).ToList<string>();
+        }
+
         public async Task<long> Count()
         {
             return await _col.CountDocumentsAsync(new BsonDocument());
         }
 
-        /// <summary>
-        /// Returns all channels of a certain language that are within the
-        /// channelIds list
-        /// </summary>
-        /// <param name="channelIds"></param>
-        /// <param name="skip"></param>
-        /// <param name="take"></param>
-        /// <param name="channelLanguage"></param>
-        /// <returns></returns>
         public async Task<List<Channel>> GetAll(
             List<string> channelIds,
             int skip = 0,
@@ -79,11 +69,6 @@ namespace Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        /// <summary>
-        /// Returns all channels that are within the hannelIds list
-        /// </summary>
-        /// <param name="channelIds"></param>
-        /// <returns></returns>
         public async Task<List<Channel>> GetAll(List<string> channelIds)
         {
             return await _col
@@ -91,11 +76,6 @@ namespace Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        /// <summary>
-        /// Read a single channel from database
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         public async Task<Channel> Get(string id)
         {
             return await _col
@@ -106,22 +86,14 @@ namespace Infrastructure.Repositories
                 .FirstOrDefaultAsync<Channel>();
         }
 
-        /// <summary>
-        /// Search channels by text query
-        /// </summary>
-        /// <param name="q"></param>
-        /// <param name="language"></param>
-        /// <returns></returns>
         public async Task<List<Channel>> Search(string q, string language = "en")
         {
-            // guard clause
             if (string.IsNullOrWhiteSpace(q))
             {
                 return new List<Channel>();
             }
 
-            // construct the search query
-            var query = new BsonDocument()
+            var searchQuery = new BsonDocument()
             {
                 {
                     "$text", new BsonDocument()
@@ -135,20 +107,12 @@ namespace Infrastructure.Repositories
             };
 
             return await _col
-                .Find(query)
+                .Find(searchQuery)
                 .Project<Channel>("{ title: 1, description: 1, lastUploadAt: 1, thumbnail: 1, views: 1, subscribers: 1, publishedAt: 1, videoCount: 1 }")
                 .Limit(Constants.SEARCH_RESULTS_MAX_COUNT)
                 .ToListAsync();
         }
 
-        /// <summary>
-        /// Gets the one channel that uploaded the last from a list of channel ids
-        /// Only channels that are above a certain threshold will be considered for this query
-        /// </summary>
-        /// <param name="channelIds"></param>
-        /// <param name="subscriberMinValue"></param>
-        /// <param name="language"></param>
-        /// <returns></returns>
         public async Task<Channel> GetLastUploader(
             List<string> channelIds,
             int subscriberMinValue,
@@ -161,15 +125,53 @@ namespace Infrastructure.Repositories
                 .FirstOrDefaultAsync();
         }
 
+        public async Task<List<Channel>> GetIDsByLastUploadTimerange(
+           DateTime from,
+           DateTime until
+        )
+        {
+            return await _col
+                .Find(c =>
+                    c.LastUploadAt <= new DateTimeOffset(from).ToUnixTimeSeconds() &&
+                    c.LastUploadAt > new DateTimeOffset(until).ToUnixTimeSeconds()
+                )
+                .Project<Channel>("{ _id: 1 }")
+                .ToListAsync();
+        }
+
+        public async Task UpdateNewVideoWasFound(string channelId, uint lastUploadTimestamp)
+        {
+            var update = Builders<Channel>.Update
+                .Set(c => c.LastUploadAt, lastUploadTimestamp)
+                .Set(c => c.LastCrawl, DateTime.UtcNow);
+
+            await _col.UpdateOneAsync(c => c.ID == channelId, update);
+        }
+
+        public async Task<uint> GetLastUploadTimestamp(string channelId)
+        {
+            var channel = await _col
+                .Find(c => c.ID == channelId)
+                .Project<Channel>("{ lastUploadAt: 1 }")
+                .SingleOrDefaultAsync();
+
+            return channel.LastUploadAt;
+        }
+
+        public async Task UpdateChannelDetails(IEnumerable<YouTubeChannel> channelDetails)
+        {
+            // Description
+            // Subscribers
+            // Videos
+
+            //await _col.UpdateManyAsync();
+            
+        }
+
         #endregion
 
         #region Private Methods
 
-        /// <summary>
-        /// Returns a Lambda expression to sort channels by based on an enum
-        /// </summary>
-        /// <param name="sortBy"></param>
-        /// <returns></returns>
         private Expression<Func<Channel, object>> getSortKey(ChannelSorting sortBy)
         {
             return sortBy switch

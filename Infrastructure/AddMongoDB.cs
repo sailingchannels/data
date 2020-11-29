@@ -20,8 +20,10 @@ namespace Infrastructure
                 connString = Environment.GetEnvironmentVariable("MONGODB");
             }
 
+            Console.WriteLine(connString);
+
             // database
-            services.AddSingleton<IMongoClient>(f => new MongoClient());
+            services.AddSingleton<IMongoClient>(f => new MongoClient(connString));
             services.AddSingleton(f => f.GetRequiredService<IMongoClient>().GetDatabase("sailing-channels"));
 
             // collections

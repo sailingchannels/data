@@ -50,6 +50,7 @@ namespace Infrastructure.Mappings
                 cm.MapMember(c => c.Popularity).SetElementName("popularity");
                 cm.MapMember(c => c.Keywords).SetElementName("keywords");
                 cm.MapMember(c => c.CustomLinks).SetElementName("customLinks");
+                cm.MapMember(c => c.UploadsPlaylistId).SetElementName("uploadsPlaylistId");
             });
 
             // SEARCH

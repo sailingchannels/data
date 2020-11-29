@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using AutoMapper;
 using Core.Interfaces.Repositories;
 using GraphQL.Types;
 using Microsoft.Extensions.Logging;
-using Presentation.API.Auth;
 
 namespace Presentation.API.GraphQL.Resolver
 {
@@ -37,8 +34,11 @@ namespace Presentation.API.GraphQL.Resolver
                 resolve: async (context) =>
                 {
                     // read user context dictionary
-                    var userContext = (Dictionary<string, object>) context.UserContext;
-                    string userId = Convert.ToString(userContext[ClaimTypes.UserId]);
+                    var userContext = (GraphQLUserContext) context.UserContext;
+                    string userId = userContext.GetUserId();
+
+                    // require user to be authenticated
+                    if (userId == null) return false;
 
                     // map entity to model
                     return await _flagRepository.FlagExists(
@@ -64,8 +64,11 @@ namespace Presentation.API.GraphQL.Resolver
                 resolve: async (context) =>
                 {
                     // read user context dictionary
-                    var userContext = (Dictionary<string, object>)context.UserContext;
-                    string userId = Convert.ToString(userContext[ClaimTypes.UserId]);
+                    var userContext = (GraphQLUserContext)context.UserContext;
+                    string userId = userContext.GetUserId();
+
+                    // require user to be authenticated
+                    if (userId == null) return false;
 
                     await _flagRepository.AddFlag(
                         context.GetArgument<string>("channelId"),

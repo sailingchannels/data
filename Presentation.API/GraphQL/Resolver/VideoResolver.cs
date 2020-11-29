@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 using AutoMapper;
+using Core.DTO.UseCaseRequests;
 using Core.Interfaces.Repositories;
+using Core.Interfaces.UseCases;
 using GraphQL.Types;
 using Infrastructure.API.Models;
 using Microsoft.Extensions.Logging;
@@ -15,6 +16,7 @@ namespace Presentation.API.GraphQL.Resolver
     {
         private readonly IVideoRepository _videoRepository;
         private readonly IChannelRepository _channelRepository;
+        private readonly IAggregateVideoPublishTimesUseCase _aggregateVideoPublishTimesUseCase;
         private readonly IMapper _mapper;
         private readonly ILogger<ChannelResolver> _logger;
 
@@ -22,11 +24,13 @@ namespace Presentation.API.GraphQL.Resolver
             ILogger<ChannelResolver> logger,
             IVideoRepository videoRepository,
             IChannelRepository channelRepository,
+            IAggregateVideoPublishTimesUseCase aggregateVideoPublishTimesUseCase,
             IMapper mapper
         )
         {
             _videoRepository = videoRepository ?? throw new ArgumentNullException("videoRepository");
             _channelRepository = channelRepository ?? throw new ArgumentNullException("channelRepository");
+            _aggregateVideoPublishTimesUseCase = aggregateVideoPublishTimesUseCase ?? throw new ArgumentNullException(nameof(aggregateVideoPublishTimesUseCase));
             _mapper = mapper ?? throw new ArgumentNullException("mapper");
             _logger = logger;
         }
@@ -107,6 +111,47 @@ namespace Presentation.API.GraphQL.Resolver
 
                     // map entity to model
                     return videoCount;
+                }
+            );
+
+            // VIDEO PUBLISH DISTRIBUTION
+            graphQLQuery.FieldAsync<ListGraphType<VideoPublishAggregationItemType>>(
+                "videoPublishDistribution",
+                arguments: new QueryArguments(
+                    new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "channelId" }
+                ),
+                resolve: async (context) =>
+                {
+                    try
+                    {
+                        var result = await _aggregateVideoPublishTimesUseCase.Handle(
+                            new AggregateVideoPublishTimesRequest(
+                                context.GetArgument<string>("channelId")
+                            )
+                        );
+
+                        var aggregationModels = new List<VideoPublishAggregationItemModel>();
+
+                        foreach (var daysOfWeek in result.Aggregation)
+                        {
+                            foreach (var hourOfDay in daysOfWeek.Value)
+                            {
+                                aggregationModels.Add(new VideoPublishAggregationItemModel()
+                                {
+                                    DayOfTheWeek = (int)daysOfWeek.Key,
+                                    HourOfTheDay = hourOfDay.Key,
+                                    PublishedVideos = hourOfDay.Value
+                                });
+                            }
+                        }
+
+                        // map entity to model
+                        return aggregationModels;
+                    }
+                    catch(Exception e)
+                    {
+                        return null;
+                    }
                 }
             );
         }

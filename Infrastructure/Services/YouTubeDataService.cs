@@ -3,54 +3,81 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Core.Entities;
 using Core.Interfaces.Services;
-using Google.Apis.Services;
 using Google.Apis.YouTube.v3;
 using Google.Apis.YouTube.v3.Data;
 using System;
+using AutoMapper;
 
 namespace Infrastructure.Services
 {
     public class YouTubeDataService : IYouTubeDataService
     {
         private YouTubeService _ytService;
+        private readonly IMapper _mapper;
 
-        public YouTubeDataService()
+        public YouTubeDataService(
+            YouTubeService ytService,
+            IMapper mapper)
         {
-            _ytService = new YouTubeService(new BaseClientService.Initializer()
-            {
-                ApiKey = Environment.GetEnvironmentVariable("GOOGLE_API_KEY"),
-                ApplicationName = this.GetType().ToString()
-            });
+            _ytService = ytService ?? throw new ArgumentNullException(nameof(YouTubeService));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         /// <summary>
         /// Get a dictionary of YouTube channel informations based on a list of channel ids
         /// </summary>
         /// <param name="channelIds"></param>
+        /// <param name="includingStatistics"></param>
         /// <returns></returns>
-        public async Task<List<YouTubeChannel>> GetSnippets(List<string> channelIds)
+        public async Task<IEnumerable<YouTubeChannel>> GetChannelDetails(
+            IEnumerable<string> channelIds,
+            bool includingStatistics = false
+        )
         {
+            if (channelIds.Count() > 50)
+            {
+                throw new ArgumentOutOfRangeException("channelIds must contain max. 50 entries");
+            }
+
+            string part = "snippet";
+
+            if (includingStatistics == true)
+            {
+                part += ",statistics";
+            }
+
             // prepare request to get channel snippets by id
-            var listRequest = _ytService.Channels.List("snippet");
+            var listRequest = _ytService.Channels.List(part);
             listRequest.Id = string.Join(',', channelIds);
+            listRequest.MaxResults = channelIds.Count();
 
             // query youtube api
             ChannelListResponse listResponse = await listRequest.ExecuteAsync();
 
-            var results = new List<YouTubeChannel>();
+            return _mapper.Map<IEnumerable<YouTubeChannel>>(listResponse?.Items);
+        }
 
-            foreach(var channel in listResponse?.Items)
+        /// <summary>
+        /// Retrieve the playlist id for channel uploads
+        /// </summary>
+        /// <param name="channelId"></param>
+        /// <returns></returns>
+        public async Task<string> GetUploadsPlaylistId(string channelId)
+        {
+            // prepare request to get channel content details by id
+            var listRequest = _ytService.Channels.List("contentDetails");
+            listRequest.Id = channelId;
+
+            // query youtube api
+            ChannelListResponse listResponse = await listRequest.ExecuteAsync();
+
+            if (listResponse.Items?.Count > 0)
             {
-                results.Add(new YouTubeChannel()
-                {
-                    ID = channel.Id,
-                    Title = channel.Snippet.Title,
-                    Description = channel.Snippet.Description,
-                    Thumbnail = channel.Snippet.Thumbnails.Default__.Url
-                });
+                return listResponse.Items.First()
+                    .ContentDetails.RelatedPlaylists.Uploads;
             }
 
-            return results;
+            return null;
         }
 
         /// <summary>
@@ -67,6 +94,49 @@ namespace Infrastructure.Services
             ChannelListResponse channelResponse = await channelRequest.ExecuteAsync();
 
             return channelResponse?.Items?.FirstOrDefault()?.Id;
+        }
+
+        /// <summary>
+        /// Returns a list of video results for a channel, the latest 10 videos
+        /// </summary>
+        /// <param name="uploadsPlaylistId"></param>
+        /// <returns></returns>
+        public async Task<IEnumerable<VideoResult>> GetLatestVideos(string uploadsPlaylistId)
+        {
+            // construct a request for video snippets
+            var request = _ytService.PlaylistItems.List("snippet");
+            request.MaxResults = 50;
+            request.PlaylistId = uploadsPlaylistId;
+
+            PlaylistItemListResponse results = await request.ExecuteAsync();
+
+            // filter videos and take the snippet
+            return _mapper.Map<List<VideoResult>>(results.Items);
+        }
+
+        /// <summary>
+        /// Get statistics and status details about video
+        /// </summary>
+        /// <param name="videoId"></param>
+        /// <returns></returns>
+        public async Task<VideoStatusStatistics> GetVideoDetails(string videoId)
+        {
+            var request = _ytService.Videos.List("snippet,statistics,status");
+            request.Id = videoId;
+
+            VideoListResponse result = await request.ExecuteAsync();
+
+            Google.Apis.YouTube.v3.Data.Video video = result?.Items.FirstOrDefault();
+
+            return new VideoStatusStatistics()
+            {
+                Comments = video.Statistics.CommentCount.GetValueOrDefault(0),
+                Dislikes = video.Statistics.DislikeCount.GetValueOrDefault(0),
+                Likes = video.Statistics.LikeCount.GetValueOrDefault(0),
+                Views = video.Statistics.ViewCount.GetValueOrDefault(0),
+                IsPrivate = video.Status.PrivacyStatus != "public",
+                Tags = video.Snippet.Tags?.ToList()
+            };
         }
     }
 }
