@@ -2,10 +2,10 @@
 
 namespace Infrastructure.API.Models
 {
-    public class TopicDetailModel
+    public record TopicDetailModel
     {
-        public TopicModel Topic { get; set; }
-        public List<VideoModel> Videos { get; set; }
-        public List<ChannelModel> Channels { get; set; }
+        public TopicModel Topic { get; init; }
+        public IReadOnlyCollection<VideoModel> Videos { get; init; }
+        public IReadOnlyCollection<ChannelModel> Channels { get; init; }
     }
 }

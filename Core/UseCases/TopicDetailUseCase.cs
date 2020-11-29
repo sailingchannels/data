@@ -41,12 +41,12 @@ namespace Core.UseCases
         {
             TopicDetailResponse response;
 
-            string cacheKey = $"{CacheKeyPrefix}.{message.TopicID}";
+            string cacheKey = $"{CacheKeyPrefix}.{message.TopicId}";
 
             // check if the value is in cache
             if (!_cache.TryGetValue(cacheKey, out response))
             {
-                var topic = await _topicRepository.Get(message.TopicID);
+                var topic = await _topicRepository.Get(message.TopicId);
 
                 var taggedChannelIds = await _tagRepository.SearchChannels(response.Topic.SearchTerms);
 

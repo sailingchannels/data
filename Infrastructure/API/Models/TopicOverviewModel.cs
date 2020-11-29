@@ -1,9 +1,9 @@
 ﻿namespace Infrastructure.API.Models
 {
-    public class TopicOverviewModel
+    public record TopicOverviewModel
     {
-        public TopicModel Topic { get; set; }
-        public string LatestVideoID { get; set; }
-        public string LatestChannelTitle { get; set; }
+        public TopicModel Topic { get; init; }
+        public string LatestVideoID { get; init; }
+        public string LatestChannelTitle { get; init; }
     }
 }

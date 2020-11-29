@@ -6,8 +6,8 @@ namespace Core.Interfaces.Repositories
 {
     public interface ISuggestionRepository
     {
-        Task<List<Suggestion>> GetAny(string userId, List<string> channelIds);
-        Task<List<Suggestion>> GetAny(List<string> channelIds);
+        Task<IReadOnlyCollection<Suggestion>> GetAny(string userId, IReadOnlyCollection<string> channelIds);
+        Task<IReadOnlyCollection<Suggestion>> GetAny(IReadOnlyCollection<string> channelIds);
         Task AddSuggestion(string channelId, string userId);
     }
 }

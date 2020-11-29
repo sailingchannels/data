@@ -17,12 +17,7 @@ namespace Infrastructure.Repositories
             _col = col ?? throw new ArgumentNullException(nameof(col));
         }
 
-        /// <summary>
-        /// Get the 15 most popular tags for a certain channel
-        /// </summary>
-        /// <param name="channelId"></param>
-        /// <returns></returns>
-        public async Task<List<Tag>> GetByChannel(string channelId)
+        public async Task<IReadOnlyCollection<Tag>> GetByChannel(string channelId)
         {
             return await _col
                 .Find(t => t.Id.ChannelId == channelId && t.Popularity > 1)
@@ -31,13 +26,7 @@ namespace Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        /// <summary>
-        /// Finds a list of channel ids that have been tagged with any of the
-        /// given tags parameters
-        /// </summary>
-        /// <param name="tags"></param>
-        /// <returns></returns>
-        public async Task<List<string>> SearchChannels(IReadOnlyCollection<string> tags)
+        public async Task<IReadOnlyCollection<string>> SearchChannels(IReadOnlyCollection<string> tags)
         {
             // construct the search query
             var query = new BsonDocument()

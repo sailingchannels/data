@@ -14,12 +14,7 @@ namespace Infrastructure.Repositories
         {
             _col = col ?? throw new ArgumentNullException(nameof(col));
         }
-
-        /// <summary>
-        /// Insert a new search log entry
-        /// </summary>
-        /// <param name="query"></param>
-        /// <returns></returns>
+        
         public async Task Insert(string query)
         {
             var search = new Search()

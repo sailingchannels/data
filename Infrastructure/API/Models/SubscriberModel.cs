@@ -1,9 +1,9 @@
 ﻿namespace Infrastructure.API.Models
 {
-    public class SubscriberModel
+    public record SubscriberModel
     {
-        public string ChannelID { get; set; }
-        public int Date { get; set; }
-        public int Subscribers { get; set; }
+        public string ChannelID { get; init; }
+        public int Date { get; init; }
+        public int Subscribers { get; init; }
     }
 }

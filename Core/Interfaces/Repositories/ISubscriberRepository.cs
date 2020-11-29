@@ -6,6 +6,6 @@ namespace Core.Interfaces.Repositories
 {
     public interface ISubscriberRepository
     {
-        Task<List<Subscriber>> GetHistory(string channelId, int days);
+        Task<IReadOnlyCollection<Subscriber>> GetHistory(string channelId, int days);
     }
 }

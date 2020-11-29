@@ -1,8 +1,8 @@
 ﻿namespace Infrastructure.API.Models
 {
-    public class LanguageModel
+    public record LanguageModel
     {
-        public string Code { get; set; }
-        public string Name { get; set; }
+        public string Code { get; init; }
+        public string Name { get; init; }
     }
 }

@@ -15,24 +15,14 @@ namespace Infrastructure.Repositories
         {
             _col = col ?? throw new ArgumentNullException(nameof(col));
         }
-
-        /// <summary>
-        /// Read all topics
-        /// </summary>
-        /// <param name="language"></param>
-        /// <returns></returns>
-        public async Task<List<Topic>> GetAll(string language)
+        
+        public async Task<IReadOnlyCollection<Topic>> GetAll(string language)
         {
             return await _col
                 .Find(t => t.Language == language)
                 .ToListAsync();
         }
 
-        /// <summary>
-        /// Read a single topic by id
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         public async Task<Topic> Get(string id)
         {
             return await _col

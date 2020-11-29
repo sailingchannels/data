@@ -31,7 +31,7 @@ namespace Core.UseCases
         public async Task<IdentifySailingChannelResponse> Handle(IdentifySailingChannelRequest message)
         {
             // guard clause
-            if (string.IsNullOrWhiteSpace(message.PossibleYouTubeChannelURL))
+            if (string.IsNullOrWhiteSpace(message.PossibleYouTubeChannelUrl))
             {
                 return new IdentifySailingChannelResponse(
                     ChannelIdentificationStatus.NotValid
@@ -40,7 +40,7 @@ namespace Core.UseCases
 
             // try to identify a channel id from the URL
             var channelIdResponse = await _extractYouTubeChannelIdUseCase.Handle(
-                new ExtractYouTubeChannelIDRequest(message.PossibleYouTubeChannelURL)
+                new ExtractYouTubeChannelIdRequest(message.PossibleYouTubeChannelUrl)
             );
 
             // could not identy a channel

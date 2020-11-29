@@ -2,9 +2,9 @@
 
 namespace Infrastructure.API.Models
 {
-    public class SearchResultModel
+    public record SearchResultModel
     {
-        public List<VideoModel> Videos { get; set; }
-        public List<ChannelModel> Channels { get; set; }
+        public IReadOnlyCollection<VideoModel> Videos { get; init; }
+        public IReadOnlyCollection<ChannelModel> Channels { get; init; }
     }
 }

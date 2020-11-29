@@ -23,14 +23,8 @@ namespace Infrastructure.Services
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        /// <summary>
-        /// Get a dictionary of YouTube channel informations based on a list of channel ids
-        /// </summary>
-        /// <param name="channelIds"></param>
-        /// <param name="includingStatistics"></param>
-        /// <returns></returns>
-        public async Task<IEnumerable<YouTubeChannel>> GetChannelDetails(
-            IEnumerable<string> channelIds,
+        public async Task<IReadOnlyCollection<YouTubeChannel>> GetChannelDetails(
+            IReadOnlyCollection<string> channelIds,
             bool includingStatistics = false
         )
         {
@@ -54,7 +48,7 @@ namespace Infrastructure.Services
             // query youtube api
             ChannelListResponse listResponse = await listRequest.ExecuteAsync();
 
-            return _mapper.Map<IEnumerable<YouTubeChannel>>(listResponse?.Items);
+            return _mapper.Map<List<YouTubeChannel>>(listResponse?.Items);
         }
 
         /// <summary>
@@ -85,7 +79,7 @@ namespace Infrastructure.Services
         /// </summary>
         /// <param name="userName"></param>
         /// <returns></returns>
-        public async Task<string> GetChannelIDFromUsername(string userName)
+        public async Task<string> GetChannelIdFromUsername(string userName)
         {
             var channelRequest = _ytService.Channels.List("id");
             channelRequest.ForUsername = userName;
@@ -101,7 +95,7 @@ namespace Infrastructure.Services
         /// </summary>
         /// <param name="uploadsPlaylistId"></param>
         /// <returns></returns>
-        public async Task<IEnumerable<VideoResult>> GetLatestVideos(string uploadsPlaylistId)
+        public async Task<IReadOnlyCollection<VideoResult>> GetLatestVideos(string uploadsPlaylistId)
         {
             // construct a request for video snippets
             var request = _ytService.PlaylistItems.List("snippet");

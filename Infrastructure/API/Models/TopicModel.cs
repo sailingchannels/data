@@ -1,9 +1,9 @@
 ﻿namespace Infrastructure.API.Models
 {
-    public class TopicModel
+    public record TopicModel
     {
-        public string ID { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
+        public string ID { get; init; }
+        public string Title { get; init; }
+        public string Description { get; init; }
     }
 }

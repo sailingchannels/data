@@ -8,15 +8,15 @@ namespace Core.Interfaces.Repositories
 {
     public interface IChannelRepository
     {
-        Task<List<Channel>> GetAll(ChannelSorting sortBy, int skip, int take, string channelLanguage);
-        Task<List<Channel>> GetAll(List<string> channelIds, int skip, int take, string channelLanguage);
+        Task<IReadOnlyCollection<Channel>> GetAll(ChannelSorting sortBy, int skip, int take, string channelLanguage);
+        Task<IReadOnlyCollection<Channel>> GetAll(IReadOnlyCollection<string> channelIds, int skip, int take, string channelLanguage);
         Task<Channel> Get(string id);
-        Task<Channel> GetLastUploader(List<string> channelIds, int subscriberMinValue, string language);
-        Task<List<Channel>> Search(string q, string language = "en");
-        Task<List<Channel>> GetAll(List<string> channelIds);
+        Task<Channel> GetLastUploader(IReadOnlyCollection<string> channelIds, int subscriberMinValue, string language);
+        Task<IReadOnlyCollection<Channel>> Search(string q, string language = "en");
+        Task<IReadOnlyCollection<Channel>> GetAll(IReadOnlyCollection<string> channelIds);
         Task<long> Count();
-        Task<List<string>> GetAllChannelIds();
-        Task<List<Channel>> GetIDsByLastUploadTimerange(DateTime from, DateTime until);
+        Task<IReadOnlyCollection<string>> GetAllChannelIds();
+        Task<IReadOnlyCollection<Channel>> GetIDsByLastUploadTimerange(DateTime from, DateTime until);
         Task UpdateNewVideoWasFound(string channelId, uint lastUploadTimestamp);
         Task<uint> GetLastUploadTimestamp(string channelId);
     }

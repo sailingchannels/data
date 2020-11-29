@@ -21,11 +21,11 @@ namespace Core.UseCases
             _ytService = ytService ?? throw new ArgumentNullException(nameof(ytService));
         }
 
-        public async  Task<ExtractYouTubeChannelIdResponse> Handle(ExtractYouTubeChannelIDRequest message)
+        public async  Task<ExtractYouTubeChannelIdResponse> Handle(ExtractYouTubeChannelIdRequest message)
         {
             var response = new ExtractYouTubeChannelIdResponse();
 
-            if (string.IsNullOrWhiteSpace(message.YouTubeURL))
+            if (string.IsNullOrWhiteSpace(message.YoutubeUrl))
             {
                 return response;
             }
@@ -33,7 +33,7 @@ namespace Core.UseCases
             Uri youTubeURL;
             try
             {
-                youTubeURL = new Uri(message.YouTubeURL);
+                youTubeURL = new Uri(message.YoutubeUrl);
             }
             catch(UriFormatException)
             {
@@ -47,14 +47,14 @@ namespace Core.UseCases
 
             var pathParts = youTubeURL.AbsolutePath.Split('/').ToList();
 
-            if (message.YouTubeURL.Contains("/user/"))
+            if (message.YoutubeUrl.Contains("/user/"))
             {
                 var username = FindPartAfter(pathParts, "user");
-                var channelIdFromUsername = await _ytService.GetChannelIDFromUsername(username);
+                var channelIdFromUsername = await _ytService.GetChannelIdFromUsername(username);
                 
                 return response with { ChannelId = channelIdFromUsername };
             }
-            else if (message.YouTubeURL.Contains("/channel/"))
+            else if (message.YoutubeUrl.Contains("/channel/"))
             {
                 return response with { ChannelId = FindPartAfter(pathParts, "channel") };
             }

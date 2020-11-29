@@ -6,6 +6,6 @@ namespace Core.Interfaces.Repositories
 {
     public interface ILanguageRepository
     {
-        Task<List<Language>> GetAll();
+        Task<IReadOnlyCollection<Language>> GetAll();
     }
 }

@@ -49,7 +49,7 @@ namespace Core.UseCases
             }
 
             var storedChannelIds = storedChannels.Select(c => c.Id);
-            var ytFetchChannelIds = message.ChannelIdsToCheck.Except(storedChannelIds);
+            var ytFetchChannelIds = message.ChannelIdsToCheck.Except(storedChannelIds).ToList();
 
             var ytChannels = await _youtubeDataService.GetChannelDetails(ytFetchChannelIds);
 
@@ -74,7 +74,7 @@ namespace Core.UseCases
         /// <param name="terms"></param>
         /// <param name="channel"></param>
         /// <returns></returns>
-        private bool CheckSailingTerms(List<SailingTerm> terms, DisplayItem channel)
+        private bool CheckSailingTerms(IReadOnlyCollection<SailingTerm> terms, DisplayItem channel)
         {
             string body = channel.Title.ToLower() + " " + channel.Description.ToLower();
 

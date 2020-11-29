@@ -15,14 +15,8 @@ namespace Infrastructure.Repositories
         {
             _col = col ?? throw new ArgumentNullException(nameof(col));
         }
-
-        /// <summary>
-        /// Returns a historical timeseries of subscriber data
-        /// </summary>
-        /// <param name="channelId"></param>
-        /// <param name="days"></param>
-        /// <returns></returns>
-        public async Task<List<Subscriber>> GetHistory(string channelId, int days)
+        
+        public async Task<IReadOnlyCollection<Subscriber>> GetHistory(string channelId, int days)
         {
             // allow to look at a maximum of 30 days in the past
             days = Math.Min(days, 30);

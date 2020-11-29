@@ -1,9 +1,9 @@
 ﻿namespace Infrastructure.API.Models
 {
-    public class ChannelCustomLinkModel
+    public record ChannelCustomLinkModel
     {
-        public string URL { get; set; }
-        public string Icon { get; set; }
-        public string Title { get; set; }
+        public string URL { get; init; }
+        public string Icon { get; init; }
+        public string Title { get; init; }
     }
 }

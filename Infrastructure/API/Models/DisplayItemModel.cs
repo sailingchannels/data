@@ -1,10 +1,10 @@
 ﻿namespace Infrastructure.API.Models
 {
-    public class DisplayItemModel
+    public record DisplayItemModel
     {
-        public string ID { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public string Thumbnail { get; set; }
+        public string ID { get; init; }
+        public string Title { get; init; }
+        public string Description { get; init; }
+        public string Thumbnail { get; init; }
     }
 }

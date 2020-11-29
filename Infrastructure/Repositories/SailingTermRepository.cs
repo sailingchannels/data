@@ -16,20 +16,12 @@ namespace Infrastructure.Repositories
         {
             _col = col ?? throw new ArgumentNullException(nameof(col));
         }
-
-        #region Public Methods
-
-        /// <summary>
-        /// Gets a list of all sailing terms
-        /// </summary>
-        /// <returns></returns>
-        public async Task<List<SailingTerm>> GetAll()
+        
+        public async Task<IReadOnlyCollection<SailingTerm>> GetAll()
         {
             return await _col
                 .Find(new BsonDocument())
                 .ToListAsync();
         }
-
-        #endregion
     }
 }

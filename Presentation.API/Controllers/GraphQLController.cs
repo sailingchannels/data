@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -13,30 +14,25 @@ namespace Presentation.API.Controllers
 {
     [Route("api/graphql")]
     [ApiController]
-    public class GraphQLController : Controller
+    public class GraphQlController : Controller
     {
-        private readonly ILogger<GraphQLController> _logger;
-        private readonly GraphQlQuery _graphQLQuery;
+        private readonly ILogger<GraphQlController> _logger;
+        private readonly GraphQlQuery _graphQlQuery;
         private readonly IDocumentExecuter _documentExecuter;
         private readonly ISchema _schema;
 
-        public GraphQLController(
-            ILogger<GraphQLController> logger, 
-            GraphQlQuery graphQLQuery, 
+        public GraphQlController(
+            ILogger<GraphQlController> logger, 
+            GraphQlQuery graphQlQuery, 
             IDocumentExecuter documentExecuter, 
             ISchema schema)
         {
-            _graphQLQuery = graphQLQuery;
+            _graphQlQuery = graphQlQuery ?? throw new ArgumentNullException(nameof(graphQlQuery));
             _documentExecuter = documentExecuter;
             _schema = schema;
             _logger = logger;
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="query"></param>
-        /// <returns></returns>
+        
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] IList<GraphQlParameter> queries)
         {
@@ -54,7 +50,9 @@ namespace Presentation.API.Controllers
                 };
 
                 // execute and resolve the graphql query
-                var result = await _documentExecuter.ExecuteAsync(executionOptions).ConfigureAwait(false);
+                var result = await _documentExecuter
+                    .ExecuteAsync(executionOptions)
+                    .ConfigureAwait(false);
 
                 if (result.Errors?.Count > 0)
                 {

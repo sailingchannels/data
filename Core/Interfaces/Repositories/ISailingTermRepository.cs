@@ -6,6 +6,6 @@ namespace Core.Interfaces.Repositories
 {
     public interface ISailingTermRepository
     {
-        Task<List<SailingTerm>> GetAll();
+        Task<IReadOnlyCollection<SailingTerm>> GetAll();
     }
 }

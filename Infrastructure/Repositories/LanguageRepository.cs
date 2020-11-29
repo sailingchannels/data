@@ -18,13 +18,12 @@ namespace Infrastructure.Repositories
             _col = col ?? throw new ArgumentNullException(nameof(col));
         }
 
-        #region Public Methods
 
         /// <summary>
         /// Gets a list of all available languages
         /// </summary>
         /// <returns></returns>
-        public async Task<List<Language>> GetAll()
+        public async Task<IReadOnlyCollection<Language>> GetAll()
         {
             // fetch distinct languges from database
             var langCodes = await _col
@@ -37,7 +36,5 @@ namespace Infrastructure.Repositories
                 .Select(l => new Language(l))
                 .ToList();
         }
-
-        #endregion
     }
 }

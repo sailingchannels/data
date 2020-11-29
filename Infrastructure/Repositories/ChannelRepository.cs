@@ -20,10 +20,8 @@ namespace Infrastructure.Repositories
         {
             _col = col ?? throw new ArgumentNullException(nameof(col));
         }
-
-        #region Public Methods
-
-        public async Task<List<Channel>> GetAll(
+        
+        public async Task<IReadOnlyCollection<Channel>> GetAll(
             ChannelSorting sortBy,
             int skip = 0,
             int take = 8,
@@ -39,14 +37,14 @@ namespace Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<List<string>> GetAllChannelIds()
+        public async Task<IReadOnlyCollection<string>> GetAllChannelIds()
         {
             var channels = await _col
                 .Find(new BsonDocument())
                 .Project<Channel>("{ _id: 1 }")
                 .ToListAsync();
 
-            return channels.Select(c => c.Id).ToList<string>();
+            return channels.Select(c => c.Id).ToList();
         }
 
         public async Task<long> Count()
@@ -54,8 +52,8 @@ namespace Infrastructure.Repositories
             return await _col.CountDocumentsAsync(new BsonDocument());
         }
 
-        public async Task<List<Channel>> GetAll(
-            List<string> channelIds,
+        public async Task<IReadOnlyCollection<Channel>> GetAll(
+            IReadOnlyCollection<string> channelIds,
             int skip = 0,
             int take = 8,
             string channelLanguage = "en"
@@ -69,7 +67,7 @@ namespace Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<List<Channel>> GetAll(List<string> channelIds)
+        public async Task<IReadOnlyCollection<Channel>> GetAll(IReadOnlyCollection<string> channelIds)
         {
             return await _col
                 .Find(c => channelIds.Contains(c.Id))
@@ -86,7 +84,7 @@ namespace Infrastructure.Repositories
                 .FirstOrDefaultAsync<Channel>();
         }
 
-        public async Task<List<Channel>> Search(string q, string language = "en")
+        public async Task<IReadOnlyCollection<Channel>> Search(string q, string language = "en")
         {
             if (string.IsNullOrWhiteSpace(q))
             {
@@ -114,7 +112,7 @@ namespace Infrastructure.Repositories
         }
 
         public async Task<Channel> GetLastUploader(
-            List<string> channelIds,
+            IReadOnlyCollection<string> channelIds,
             int subscriberMinValue,
             string language)
         {
@@ -125,7 +123,7 @@ namespace Infrastructure.Repositories
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<List<Channel>> GetIDsByLastUploadTimerange(
+        public async Task<IReadOnlyCollection<Channel>> GetIDsByLastUploadTimerange(
            DateTime from,
            DateTime until
         )
@@ -157,11 +155,7 @@ namespace Infrastructure.Repositories
 
             return channel.LastUploadAt;
         }
-
-        #endregion
-
-        #region Private Methods
-
+        
         private Expression<Func<Channel, object>> getSortKey(ChannelSorting sortBy)
         {
             return sortBy switch
@@ -174,7 +168,5 @@ namespace Infrastructure.Repositories
                 _ => (x) => x.Subscribers
             };
         }
-
-        #endregion
     }
 }

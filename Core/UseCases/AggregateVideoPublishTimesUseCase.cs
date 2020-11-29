@@ -21,7 +21,7 @@ namespace Core.UseCases
             AggregateVideoPublishTimesRequest message
         )
         {
-            var publishTimestamps = await _videoRepository.GetPublishedDates(message.ChannelID);
+            var publishTimestamps = await _videoRepository.GetPublishedDates(message.ChannelId);
 
             var aggregation = new Dictionary<DayOfWeek, Dictionary<int, int>>();
 

@@ -2,19 +2,21 @@
 
 namespace Infrastructure.API.Models
 {
-    public class ChannelModel
+    public record ChannelModel
     {
-        public string ID { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public int Views { get; set; }
-        public int PublishedAt { get; set; }
-        public int Subscribers { get; set; }
-        public int VideoCount { get; set; }
-        public int LastUploadAt { get; set; }
-        public bool SubscribersHidden { get; set; }
-        public string Thumbnail { get; set; }
-        public List<ChannelCustomLinkModel> CustomLinks { get; set; } = new List<ChannelCustomLinkModel>();
-        public List<string> Keywords { get; set; } = new List<string>();
+        public string ID { get; init; }
+        public string Title { get; init; }
+        public string Description { get; init; }
+        public int Views { get; init; }
+        public int PublishedAt { get; init; }
+        public int Subscribers { get; init; }
+        public int VideoCount { get; init; }
+        public int LastUploadAt { get; init; }
+        public bool SubscribersHidden { get; init; }
+        public string Thumbnail { get; init; }
+        
+        public IReadOnlyCollection<ChannelCustomLinkModel> CustomLinks { get; init; }
+        
+        public IReadOnlyCollection<string> Keywords { get; init; }
     }
 }

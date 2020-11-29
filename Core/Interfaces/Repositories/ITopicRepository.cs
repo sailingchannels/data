@@ -6,7 +6,7 @@ namespace Core.Interfaces.Repositories
 {
     public interface ITopicRepository
     {
-        Task<List<Topic>> GetAll(string language);
+        Task<IReadOnlyCollection<Topic>> GetAll(string language);
         Task<Topic> Get(string id);
     }
 }
