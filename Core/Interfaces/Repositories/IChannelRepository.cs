@@ -15,7 +15,7 @@ namespace Core.Interfaces.Repositories
         Task<IReadOnlyCollection<Channel>> Search(string q, string language = "en");
         Task<IReadOnlyCollection<Channel>> GetAll(IReadOnlyCollection<string> channelIds);
         Task<long> Count();
-        Task<IReadOnlyCollection<string>> GetAllChannelIds();
+        Task<IReadOnlyCollection<Channel>> GetAllChannelIdAndTitle();
         Task<IReadOnlyCollection<Channel>> GetIDsByLastUploadTimerange(DateTime from, DateTime until);
         Task UpdateNewVideoWasFound(string channelId, uint lastUploadTimestamp);
         Task<uint> GetLastUploadTimestamp(string channelId);

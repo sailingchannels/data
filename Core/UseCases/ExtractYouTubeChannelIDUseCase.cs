@@ -69,7 +69,7 @@ namespace Core.UseCases
         /// <param name="parts"></param>
         /// <param name="predecessor"></param>
         /// <returns></returns>
-        private string FindPartAfter(List<string> parts, string predecessor)
+        private string? FindPartAfter(List<string> parts, string predecessor)
         {
             var next = false;
 

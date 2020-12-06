@@ -2,6 +2,6 @@
 {
     public record ExtractYouTubeChannelIdResponse
     {
-        public string ChannelId { get; init; }
+        public string? ChannelId { get; init; }
     }
 }

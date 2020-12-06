@@ -29,6 +29,12 @@ namespace Core.UseCases
             {
                 var date = DateTimeOffset.FromUnixTimeSeconds(timestamp);
 
+                var skipOldTimestamps = Math.Abs((DateTimeOffset.UtcNow - date).TotalDays) <= 120;
+                if (skipOldTimestamps)
+                {
+                    continue;
+                }
+
                 var shouldInitDictionary = !aggregation.ContainsKey(date.DayOfWeek);
                 if (shouldInitDictionary)
                 {

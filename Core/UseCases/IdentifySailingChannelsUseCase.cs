@@ -43,7 +43,7 @@ namespace Core.UseCases
                 new ExtractYouTubeChannelIdRequest(message.PossibleYouTubeChannelUrl)
             );
 
-            // could not identy a channel
+            // could not identity a channel
             if (string.IsNullOrWhiteSpace(channelIdResponse.ChannelId))
             {
                 return new IdentifySailingChannelResponse(

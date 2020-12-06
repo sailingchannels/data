@@ -1,152 +1,162 @@
+using System;
 using System.Collections.Generic;
-using System.Text.Json;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Core.DTO.UseCaseRequests;
 using Core.Entities;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.UseCases;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.ML;
-using Service.PublishScheduleDetection.Entities;
 
 namespace Service.PublishScheduleDetection
 {
     public class Worker : BackgroundService
     {
+        private const int MaxRecursiveMergeNeighborsDepth = 50;
+        
         private readonly ILogger<Worker> _logger;
         private readonly IChannelRepository _channelRepository;
         private readonly IAggregateVideoPublishTimesUseCase _aggregateVideoPublishTimesUseCase;
+        private readonly IChannelPublishPredictionRepository _channelPublishPredictionRepository;
 
         public Worker(
             ILogger<Worker> logger,
             IChannelRepository channelRepository,
-            IAggregateVideoPublishTimesUseCase aggregateVideoPublishTimesUseCase
-        )
+            IAggregateVideoPublishTimesUseCase aggregateVideoPublishTimesUseCase, 
+            IChannelPublishPredictionRepository channelPublishPredictionRepository)
         {
             _logger = logger;
             _channelRepository = channelRepository;
             _aggregateVideoPublishTimesUseCase = aggregateVideoPublishTimesUseCase;
+            _channelPublishPredictionRepository = channelPublishPredictionRepository;
         }
-
-        /// <summary>
-        /// The DetectSpike() method:
-        /// - Creates the transform from the estimator.
-        /// - Detects spikes based on historical sales data.
-        /// - Displays the results.
-        /// </summary>
-        /// <param name="mlContext"></param>
-        /// <param name="docSize"></param>
-        /// <param name="videoPublishes"></param>
-        static IEnumerable<PublishSchedulePrediction> DetectSpike(
-            MLContext mlContext,
-            int docSize,
-            IDataView videoPublishes
-        )
-        {
-            // use the IidSpikeEstimator to train the model for spike detection
-            var pipeline = mlContext.Transforms.DetectSpikeBySsa(
-                outputColumnName: nameof(PublishSchedulePrediction.Prediction),
-                inputColumnName: nameof(VideoPublishAggregationItem.PublishedVideos),
-
-                confidence: 99,
-                pvalueHistoryLength: docSize / 4,
-                trainingWindowSize: docSize,
-                seasonalityWindowSize: docSize / 4
-            );
-
-            // create the spike detection transform
-            var model = pipeline.Fit(
-                mlContext.Data.LoadFromEnumerable(new List<VideoPublishAggregationItem>())
-            );
-
-            // use the Transform() method to make predictions for multiple input
-            // rows of a dataset
-            IDataView transformedData = model.Transform(videoPublishes);
-
-            // convert your transformedData into a strongly-typed IEnumerable for
-            // easier display using the CreateEnumerable() method
-            var predictions = mlContext.Data.CreateEnumerable<PublishSchedulePrediction>(
-                transformedData,
-                reuseRowObject: false
-            );
-
-            return predictions;
-        }
-
-        /// <summary>
-        /// The main() execution routine of the worker 
-        /// </summary>
-        /// <param name="stoppingToken"></param>
-        /// <returns></returns>
+        
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             // read all channel ids
-            List<string> channelIds = new List<string>() { "UCZdQjaSoLjIzFnWsDQOv4ww" };//await _channelRepository.GetAllChannelIds();
+            //var channels = await _channelRepository.GetAllChannelIdAndTitle();
+            var channels = new List<Channel> {new Channel() with { Id = "UCBo9TLJiZ5HI5CXFsCxOhmA" }};
 
             _logger.LogInformation(
-                $"{channelIds.Count} channels will be inspected for publish schedules"
+                $"{channels.Count} channels will be inspected for publish schedules"
             );
 
-            foreach (string channelId in channelIds)
+            foreach (var channel in channels)
             {
-                _logger.LogInformation(channelId);
-
-                // aggregate the channel video views of this channel per
-                // timeframes (day of week, hour of day)
-                var result = await _aggregateVideoPublishTimesUseCase.Handle(
-                    new AggregateVideoPublishTimesRequest(
-                        channelId
-                    )
-                );
-
-                // prepare aggregation result data
-                var items = new List<VideoPublishAggregationItem>();
-
-                foreach (var daysOfWeek in result.Aggregation)
+                try
                 {
-                    foreach (var hourOfDay in daysOfWeek.Value)
+                    _logger.LogInformation(channel.Id);
+
+                    // aggregate the channel video views of this channel per
+                    // timeframes (day of week, hour of day)
+                    var result = await _aggregateVideoPublishTimesUseCase.Handle(
+                        new AggregateVideoPublishTimesRequest(
+                            channel.Id
+                        )
+                    );
+
+                    var items = new List<VideoPublishAggregationItem>();
+
+                    foreach (var daysOfWeek in result.Aggregation)
                     {
-                        var item = new VideoPublishAggregationItem()
+                        foreach (var hourOfDay in daysOfWeek.Value)
                         {
-                            DayOfTheWeek = (int) daysOfWeek.Key,
-                            HourOfTheDay = hourOfDay.Key,
-                            PublishedVideos = (float) hourOfDay.Value
-                        };
+                            var item = new VideoPublishAggregationItem()
+                            {
+                                DayOfTheWeek = (int) daysOfWeek.Key,
+                                HourOfTheDay = hourOfDay.Key,
+                                PublishedVideos = hourOfDay.Value
+                            };
 
-                        _logger.LogInformation(JsonSerializer.Serialize(item));
-
-                        items.Add(item);
+                            items.Add(item);
+                        }
                     }
-                }
 
-                // train ML model
-                MLContext mlContext = new MLContext();
-                IDataView dataView = mlContext.Data.LoadFromEnumerable<VideoPublishAggregationItem>(items);
-
-                var predictions = DetectSpike(mlContext, items.Count, dataView);
-
-                _logger.LogInformation("Alert\tScore\tP-Value");
-
-                int i = 0;
-                foreach (var p in predictions)
-                {
-                    var results = $"{p.Prediction[0]}\t{p.Prediction[1]:f2}\t{p.Prediction[2]:F2}";
-
-                    if (p.Prediction[0] == 1)
+                    if (items.Count == 0)
                     {
-                        var input = items[i];
-                        results += " <-- Spike detected";
-                        results += $" - {input.DayOfTheWeek} - {input.HourOfTheDay}h";
+                        _logger.LogInformation($"No uploads for channel {channel.Id} within the last 4 month");
+                        continue;
                     }
 
-                    i++;
-                    _logger.LogInformation(results);
-                }
+                    var average = items.Sum(i => i.PublishedVideos) / items.Count;
 
-                break;
+                    var sortedByDeviation = items
+                        .Select(item => new PublishSchedulePrediction(
+                            item,
+                            item.PublishedVideos / average))
+                        .OrderByDescending(item => item.DeviationFromAverage)
+                        .Where(i => i.DeviationFromAverage > average)
+                        .Take(5)
+                        .ToList();
+
+                    var mergedNeighbors = MergeNeighbors(sortedByDeviation);
+
+                    var gradient = 1 - average / mergedNeighbors.First().DeviationFromAverage;
+
+                    var channelResult = new ChannelPublishPrediction(
+                        channel.Id,
+                        channel.Title,
+                        average,
+                        mergedNeighbors,
+                        gradient);
+
+                    var updatePredictionSuccessful =
+                        await _channelPublishPredictionRepository.UpdatePrediction(channelResult);
+
+                    if (!updatePredictionSuccessful)
+                    {
+                        _logger.LogWarning($"Updating publish prediction for channel {channel.Id} was not successful");
+                    }
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e.ToString(), e.InnerException);
+                }
             }
+        }
+
+        private List<PublishSchedulePrediction> MergeNeighbors(List<PublishSchedulePrediction> items)
+        {
+            var mergedNeighbors = new List<PublishSchedulePrediction>();
+
+            for (var i = 0; i < items.Count; i++)
+            {
+                var prevIndex = i - 1;
+
+                if (prevIndex < 0)
+                {
+                    continue;
+                }
+                
+                var prevItem = items[prevIndex];
+                var currentItem = items[i];
+                var neighborFound = AreDayHourNeighbors(prevItem, currentItem);
+                
+                if (neighborFound)
+                {
+                    var mergedItem = prevItem with {
+                        PublishedVideos = (prevItem.PublishedVideos + currentItem.PublishedVideos) / 2,
+                        DeviationFromAverage = (prevItem.DeviationFromAverage + currentItem.DeviationFromAverage) / 2
+                    };
+                    
+                    mergedNeighbors.Add(mergedItem);
+                    i++;
+                }
+                else
+                {
+                    mergedNeighbors.Add(currentItem);
+                }
+            }
+            
+            return mergedNeighbors;
+        }
+
+        private bool AreDayHourNeighbors(PublishSchedulePrediction a, PublishSchedulePrediction b)
+        {
+            return Math.Abs(a.DayHourIndex - b.DayHourIndex) <= 1;
         }
     }
 }

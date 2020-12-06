@@ -63,7 +63,7 @@ namespace Presentation.API
             services.AddMemoryCache();
 
             // database
-            services.AddMongoDB();
+            services.AddMongoDb();
 
             // add automapper
             services.AddDataMappings();

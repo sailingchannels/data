@@ -7,9 +7,9 @@ using Tag = Core.Entities.Tag;
 
 namespace Infrastructure
 {
-    public static class MongoDB
+    public static class MongoDb
     {
-        public static void AddMongoDB(this IServiceCollection services)
+        public static void AddMongoDb(this IServiceCollection services)
         {
             // entity mappings
             services.AddMongoDBMappings();
@@ -36,6 +36,9 @@ namespace Infrastructure
             services.AddSingleton(f => f.GetRequiredService<IMongoDatabase>().GetCollection<Suggestion>("suggestions"));
             services.AddSingleton(f => f.GetRequiredService<IMongoDatabase>().GetCollection<SailingTerm>("sailingterms"));
             services.AddSingleton(f => f.GetRequiredService<IMongoDatabase>().GetCollection<Subscriber>("subscribers"));
+            services.AddSingleton(f =>
+                f.GetRequiredService<IMongoDatabase>()
+                    .GetCollection<ChannelPublishPrediction>("publishpredictions"));
         }
     }
 }

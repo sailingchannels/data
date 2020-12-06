@@ -37,14 +37,14 @@ namespace Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<IReadOnlyCollection<string>> GetAllChannelIds()
+        public async Task<IReadOnlyCollection<Channel>> GetAllChannelIdAndTitle()
         {
             var channels = await _col
                 .Find(new BsonDocument())
-                .Project<Channel>("{ _id: 1 }")
+                .Project<Channel>("{ _id: 1, title: 1 }")
                 .ToListAsync();
 
-            return channels.Select(c => c.Id).ToList();
+            return channels;
         }
 
         public async Task<long> Count()
