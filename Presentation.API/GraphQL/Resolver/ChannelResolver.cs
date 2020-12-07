@@ -17,17 +17,19 @@ namespace Presentation.API.GraphQL.Resolver
     {
         private readonly IChannelRepository _channelRepository;
         private readonly IIdentifySailingChannelUseCase _identifySailingChannelUseCase;
+        private readonly IChannelPublishPredictionRepository _channelPublishPredictionRepository;
         private readonly IMapper _mapper;
 
         public ChannelResolver(
             IChannelRepository channelRepository,
             IIdentifySailingChannelUseCase identifySailingChannelUseCase,
-            IMapper mapper
-        )
+            IMapper mapper, 
+            IChannelPublishPredictionRepository channelPublishPredictionRepository)
         {
-            _channelRepository = channelRepository ?? throw new ArgumentNullException("channelRepository");
-            _identifySailingChannelUseCase = identifySailingChannelUseCase ?? throw new ArgumentNullException("identifySailingChannelUseCase");
+            _channelRepository = channelRepository ?? throw new ArgumentNullException(nameof(channelRepository));
+            _identifySailingChannelUseCase = identifySailingChannelUseCase ?? throw new ArgumentNullException(nameof(identifySailingChannelUseCase));
             _mapper = mapper ?? throw new ArgumentNullException("mapper");
+            _channelPublishPredictionRepository = channelPublishPredictionRepository ?? throw new ArgumentNullException(nameof(channelPublishPredictionRepository));
         }
 
         /// <summary>
@@ -45,7 +47,7 @@ namespace Presentation.API.GraphQL.Resolver
                     new QueryArgument<NonNullGraphType<IntGraphType>> { Name = "take" },
                     new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "language" }
                 ),
-                resolve: async (context) => 
+                resolve: async context => 
                 {
                     var channels = await _channelRepository.GetAll(
                         (ChannelSorting) Enum.Parse(typeof(ChannelSorting), context.GetArgument<string>("sortBy")),
@@ -68,7 +70,7 @@ namespace Presentation.API.GraphQL.Resolver
                 arguments: new QueryArguments(
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "id" }
                 ),
-                resolve: async (context) => 
+                resolve: async context => 
                 {
                     var channel = await _channelRepository.Get(context.GetArgument<string>("id"));
 
@@ -95,7 +97,7 @@ namespace Presentation.API.GraphQL.Resolver
                 arguments: new QueryArguments(
                     new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "channelUrlHint" }
                 ),
-                resolve: async (context) =>
+                resolve: async context =>
                 {
                     var result = await _identifySailingChannelUseCase.Handle(
                         new IdentifySailingChannelRequest(
@@ -119,6 +121,17 @@ namespace Presentation.API.GraphQL.Resolver
                     return _mapper.Map<ChannelIdentificationModel>(identifiedChannel);
                 }
             );
+
+            // CHANNEL PUBLISH PREDICTION
+            graphQlQuery.FieldAsync<ListGraphType<PublishSchedulePredictionType>>(
+                "channelPublishPrediction",
+                resolve: async (context) =>
+                {
+                    var channelId = context.GetArgument<string>("channelId");
+                    var predictionResult = await _channelPublishPredictionRepository.Get(channelId);
+
+                    return _mapper.Map<List<PublishSchedulePredictionModel>>(predictionResult.PredictionItems);
+                });
         }
 
         /// <summary>

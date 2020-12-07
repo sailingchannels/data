@@ -7,7 +7,6 @@ using Core.DTO.UseCaseRequests;
 using Core.Entities;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.UseCases;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -118,9 +117,15 @@ namespace Service.PublishScheduleDetection
             }
         }
 
-        private List<PublishSchedulePrediction> MergeNeighbors(List<PublishSchedulePrediction> items)
+        private List<PublishSchedulePrediction> MergeNeighbors(List<PublishSchedulePrediction> items, int currentDepth = 0)
         {
+            if (currentDepth >= MaxRecursiveMergeNeighborsDepth)
+            {
+                return items;
+            }
+            
             var mergedNeighbors = new List<PublishSchedulePrediction>();
+            var iterationNeighborFound = false;
 
             for (var i = 0; i < items.Count; i++)
             {
@@ -135,8 +140,10 @@ namespace Service.PublishScheduleDetection
                 var currentItem = items[i];
                 var neighborFound = AreDayHourNeighbors(prevItem, currentItem);
                 
-                if (neighborFound)
+                if (neighborFound && !iterationNeighborFound)
                 {
+                    iterationNeighborFound = true;
+
                     var mergedItem = prevItem with {
                         PublishedVideos = (prevItem.PublishedVideos + currentItem.PublishedVideos) / 2,
                         DeviationFromAverage = (prevItem.DeviationFromAverage + currentItem.DeviationFromAverage) / 2
@@ -150,13 +157,19 @@ namespace Service.PublishScheduleDetection
                     mergedNeighbors.Add(currentItem);
                 }
             }
-            
-            return mergedNeighbors;
+
+            if (!iterationNeighborFound)
+            {
+                return items;
+            }
+
+            return MergeNeighbors(mergedNeighbors, ++currentDepth);
         }
 
         private bool AreDayHourNeighbors(PublishSchedulePrediction a, PublishSchedulePrediction b)
         {
-            return Math.Abs(a.DayHourIndex - b.DayHourIndex) <= 1;
+            var indexDiff = Math.Abs(a.DayHourIndex - b.DayHourIndex);
+            return indexDiff <= 1;
         }
     }
 }

@@ -20,6 +20,7 @@ namespace Infrastructure.API
             CreateMap<TopicDetailResponse, TopicDetailModel>();
             CreateMap<ChannelIdentificationDto, ChannelIdentificationModel>();
             CreateMap<DisplayItem, DisplayItemModel>();
+            CreateMap<PublishSchedulePrediction, PublishSchedulePredictionModel>();
 
             CreateMap<Subscriber, SubscriberModel>()
                 .ForMember(dest => dest.ChannelID, opt => opt.MapFrom(src => src.Id.ChannelId))

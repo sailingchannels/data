@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Core.Entities;
 using Core.Interfaces.Repositories;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace Infrastructure.Repositories
@@ -27,6 +28,16 @@ namespace Infrastructure.Repositories
             var updateSuccessful = result.ModifiedCount == 1;
 
             return updateSuccessful;
+        }
+
+        public async Task<ChannelPublishPrediction> Get(string channelId)
+        {
+            return await _col
+                .Find(new BsonDocument()
+                {
+                    { "_id",  channelId}
+                })
+                .FirstOrDefaultAsync<ChannelPublishPrediction>();
         }
     }
 }
