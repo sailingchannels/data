@@ -130,6 +130,11 @@ namespace Presentation.API.GraphQL.Resolver
                     var channelId = context.GetArgument<string>("channelId");
                     var predictionResult = await _channelPublishPredictionRepository.Get(channelId);
 
+                    if (predictionResult is null || predictionResult.Gradient <= 0.7)
+                    {
+                        return null;
+                    }
+                    
                     return _mapper.Map<List<PublishSchedulePredictionModel>>(predictionResult.PredictionItems);
                 });
         }
