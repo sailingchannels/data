@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using AutoMapper;
 using Core.DTO.UseCaseRequests;
 using Core.Enums;
@@ -125,17 +126,30 @@ namespace Presentation.API.GraphQL.Resolver
             // CHANNEL PUBLISH PREDICTION
             graphQlQuery.FieldAsync<ListGraphType<PublishSchedulePredictionType>>(
                 "channelPublishPrediction",
+                arguments: new QueryArguments(
+                    new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "channelId" },
+                    new QueryArgument<BooleanGraphType> { Name = "filterBelowAverage", DefaultValue = false}
+                ),
                 resolve: async (context) =>
                 {
                     var channelId = context.GetArgument<string>("channelId");
+                    var filterBelowAverage = context.GetArgument<bool>("filterBelowAverage");
+                    
                     var predictionResult = await _channelPublishPredictionRepository.Get(channelId);
 
-                    if (predictionResult is null || predictionResult.Gradient <= 0.7)
+                    if (predictionResult is null or { Gradient: <= 0.7f })
                     {
                         return null;
                     }
+
+                    var predictionItems = predictionResult.PredictionItems;
                     
-                    return _mapper.Map<List<PublishSchedulePredictionModel>>(predictionResult.PredictionItems);
+                    if (filterBelowAverage)
+                    {
+                        predictionItems = predictionItems.Where(i => i.DeviationFromAverage > 0);
+                    }
+                    
+                    return _mapper.Map<List<PublishSchedulePredictionModel>>(predictionItems);
                 });
         }
 
