@@ -11,7 +11,7 @@
     <PackageReference Include="Autofac" Version="4.9.4" />
     <PackageReference Include="GraphQL" Version="2.4.0" />
     <PackageReference Include="AutoMapper" Version="9.0.0" />
-    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
     <PackageReference Include="Microsoft.Toolkit" Version="6.0.0" />
     <PackageReference Include="Google.Apis.YouTube.v3" Version="1.42.0.1758" />
     <PackageReference Include="jose-jwt" Version="2.5.0" />
