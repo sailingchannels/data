@@ -33,43 +33,41 @@ namespace Core.UseCases
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="message"></param>
         /// <returns></returns>
         public async Task<TopicDetailResponse> Handle(TopicDetailRequest message)
         {
-            TopicDetailResponse response;
+            var cacheKey = $"{CacheKeyPrefix}.{message.TopicId}";
 
-            string cacheKey = $"{CacheKeyPrefix}.{message.TopicId}";
-
-            // check if the value is in cache
-            if (!_cache.TryGetValue(cacheKey, out response))
+            if (_cache.TryGetValue(cacheKey, out TopicDetailResponse response))
             {
-                var topic = await _topicRepository.Get(message.TopicId);
-
-                var taggedChannelIds = await _tagRepository.SearchChannels(response.Topic.SearchTerms);
-
-                var channels = await _channelRepository.GetAll(
-                    taggedChannelIds,
-                    0,
-                    taggedChannelIds.Count,
-                    response.Topic.Language);
-
-                var videos = await _videoRepository.GetByTags(response.Topic.SearchTerms, 25);
-                
-                response = new TopicDetailResponse(
-                    topic,
-                    videos, 
-                    channels);
-                
-                _cache.Set(
-                    cacheKey,
-                    response,
-                    new MemoryCacheEntryOptions()
-                        .SetSlidingExpiration(TimeSpan.FromHours(1))
-                );
+                return response;
             }
+
+            var topic = await _topicRepository.Get(message.TopicId);
+            var taggedChannelIds = await _tagRepository.SearchChannels(topic.SearchTerms);
+
+            var channels = await _channelRepository.GetAll(
+                taggedChannelIds,
+                0,
+                taggedChannelIds.Count,
+                topic.Language);
+
+            var videos = await _videoRepository.GetByTags(topic.SearchTerms, 25);
+
+            response = new TopicDetailResponse(
+                topic,
+                videos,
+                channels);
+
+            _cache.Set(
+                cacheKey,
+                response,
+                new MemoryCacheEntryOptions()
+                    .SetSlidingExpiration(TimeSpan.FromHours(1))
+            );
 
             return response;
         }
