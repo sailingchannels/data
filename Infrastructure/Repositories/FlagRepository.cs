@@ -17,9 +17,9 @@ namespace Infrastructure.Repositories
 
         public async Task AddFlag(string channelId, string userId)
         {
-            var flag = new Flag()
+            var flag = new Flag
             {
-                Id = new FlagId()
+                Id = new FlagId
                 {
                     ChannelId = channelId,
                     UserId = userId
