@@ -13,7 +13,7 @@ namespace Core.Entities
         public string Language { get; init; }
         public string Country { get; init; }
         public bool DetectedLanguage { get; init; }
-        public uint LastUploadAt { get; init; }
+        public uint? LastUploadAt { get; init; }
         public bool SubscribersHidden { get; init; }
         public ChannelPopularity Popularity { get; init; }
         public IReadOnlyCollection<string> Keywords { get; init; }

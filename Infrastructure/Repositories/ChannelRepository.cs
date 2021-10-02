@@ -20,7 +20,7 @@ namespace Infrastructure.Repositories
         {
             _col = col ?? throw new ArgumentNullException(nameof(col));
         }
-        
+
         public async Task<IReadOnlyCollection<Channel>> GetAll(
             ChannelSorting sortBy,
             int skip = 0,
@@ -153,9 +153,9 @@ namespace Infrastructure.Repositories
                 .Project<Channel>("{ lastUploadAt: 1 }")
                 .SingleOrDefaultAsync();
 
-            return channel.LastUploadAt;
+            return channel.LastUploadAt ?? 0;
         }
-        
+
         private Expression<Func<Channel, object>> getSortKey(ChannelSorting sortBy)
         {
             return sortBy switch
