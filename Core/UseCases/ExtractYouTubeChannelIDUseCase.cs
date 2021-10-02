@@ -54,7 +54,8 @@ namespace Core.UseCases
                 
                 return response with { ChannelId = channelIdFromUsername };
             }
-            else if (message.YoutubeUrl.Contains("/channel/"))
+
+            if (message.YoutubeUrl.Contains("/channel/"))
             {
                 return response with { ChannelId = FindPartAfter(pathParts, "channel") };
             }

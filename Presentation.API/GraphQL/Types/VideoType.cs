@@ -1,5 +1,5 @@
-﻿using Infrastructure.API.Models;
-using GraphQL.Types;
+﻿using GraphQL.Types;
+using Infrastructure.API.Models;
 
 namespace Presentation.API.GraphQL.Types
 {
@@ -10,14 +10,14 @@ namespace Presentation.API.GraphQL.Types
         {
             Name = "Video";
 
-            Field(i => i.ID, nullable: false);
-            Field(i => i.Title, nullable: false);
-            Field(i => i.Description, nullable: false);
-            Field(i => i.ChannelID, nullable: true);
-            Field(i => i.PublishedAt, nullable: false);
-            Field(i => i.Dislikes, nullable: false);
-            Field(i => i.Likes, nullable: false);
-            Field(i => i.Views, nullable: false);
+            Field(i => i.ID);
+            Field(i => i.Title);
+            Field(i => i.Description, true);
+            Field(i => i.ChannelID, true);
+            Field(i => i.PublishedAt);
+            Field(i => i.Dislikes);
+            Field(i => i.Likes);
+            Field(i => i.Views);
 
             Field<ListGraphType<StringGraphType>>("Tags");
             Field<ChannelType>("Channel");

@@ -14,12 +14,12 @@ namespace Core.UseCases
         /// <returns></returns>
         public Task<GenerateMainMenuResponse> Handle()
         {
-            var menu = new List<MainMenuSection>()
+            var menu = new List<MainMenuSection>
             {
                 new()
                 {
                     Title = "Channels",
-                    Items = new List<MainMenuItem>()
+                    Items = new List<MainMenuItem>
                     {
                         new("Subscribers", "/channels/subscribers"),
                         new("Views", "/channels/views"),
@@ -31,7 +31,7 @@ namespace Core.UseCases
                 new()
                 {
                     Title = "Menu",
-                    Items = new List<MainMenuItem>()
+                    Items = new List<MainMenuItem>
                     {
                         new("Explore by topics", "/topics"),
                         new("Introduction", "/how-it-works"),

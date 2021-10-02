@@ -1,16 +1,17 @@
-﻿using Autofac;
+﻿using System;
+using System.Linq;
+using System.Reflection;
+using Autofac;
 using GraphQL;
 using GraphQL.Types;
 using Presentation.API.GraphQL;
 using Presentation.API.GraphQL.Resolver;
 using Presentation.API.GraphQL.Types;
-using System;
-using System.Linq;
-using System.Reflection;
+using Module = Autofac.Module;
 
 namespace Presentation.API.DI
 {
-    public class AutofacCompositionRootModule : Autofac.Module
+    public class AutofacCompositionRootModule : Module
     {
         protected override void Load(ContainerBuilder builder)
         {

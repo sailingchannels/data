@@ -10,9 +10,9 @@ namespace Presentation.API.GraphQL.Types
         {
             Name = "Topic";
 
-            Field(i => i.ID, nullable: false);
-            Field(i => i.Title, nullable: false);
-            Field(i => i.Description, nullable: false);
+            Field(i => i.ID);
+            Field(i => i.Title);
+            Field(i => i.Description);
         }
     }
 }

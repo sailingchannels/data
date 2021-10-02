@@ -4,6 +4,13 @@ namespace Core.Entities
 {
     public record Language(string Code)
     {
-        public string Name => new CultureInfo(Code).EnglishName;
+        public string Name
+        {
+            get
+            {
+                var cultureInfo = new CultureInfo(Code);
+                return cultureInfo.EnglishName;
+            }
+        }
     }
 }

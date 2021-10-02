@@ -29,16 +29,16 @@ namespace Infrastructure.Repositories
         public async Task<IReadOnlyCollection<string>> SearchChannels(IReadOnlyCollection<string> tags)
         {
             // construct the search query
-            var query = new BsonDocument()
+            var query = new BsonDocument
             {
                 {
-                    "$text", new BsonDocument()
+                    "$text", new BsonDocument
                     {
                         { "$search", string.Join(" ", tags) }
                     }
                 },
                 {
-                    "value", new BsonDocument()
+                    "value", new BsonDocument
                     {
                         {"$gte", 15 }
                     }

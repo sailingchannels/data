@@ -9,10 +9,7 @@ namespace Infrastructure.Mappings
         public static void AddDataMappings(this IServiceCollection services)
         {
             // add automapper
-            services.AddAutoMapper(new[] {
-                typeof(DataMappingProfile),
-                typeof(APIModelsMappingProfile)
-            });
+            services.AddAutoMapper(typeof(DataMappingProfile), typeof(APIModelsMappingProfile));
         }
     }
 }

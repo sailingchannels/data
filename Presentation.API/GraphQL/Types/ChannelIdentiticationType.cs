@@ -1,5 +1,5 @@
-﻿using Infrastructure.API.Models;
-using GraphQL.Types;
+﻿using GraphQL.Types;
+using Infrastructure.API.Models;
 
 namespace Presentation.API.GraphQL.Types
 {
@@ -10,13 +10,13 @@ namespace Presentation.API.GraphQL.Types
         {
             Name = "ChannelIdentification";
 
-            Field(i => i.ChannelID, nullable: true);
+            Field(i => i.ChannelID, true);
 
             Field<DisplayItemType>("Channel");
 
-            Field(i => i.IsSailingChannel, nullable: false);
-            Field(i => i.Source, nullable: true);
-            Field(i => i.Status, nullable: false);
+            Field(i => i.IsSailingChannel);
+            Field(i => i.Source, true);
+            Field(i => i.Status);
         }
     }
 }

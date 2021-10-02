@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using System;
+﻿using System;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using ILoggerFactory = Microsoft.Extensions.Logging.ILoggerFactory;
+using Jose;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+
 #pragma warning disable 1998
 
 namespace Presentation.API.Auth
@@ -44,10 +45,10 @@ namespace Presentation.API.Auth
             }
 
             // decode JWT
-            var payload = Jose.JWT.Decode<JWTPayload>(
+            var payload = JWT.Decode<JWTPayload>(
                 jwtRawValue,
                 Encoding.ASCII.GetBytes(Environment.GetEnvironmentVariable("JWT_SECRET")),
-                Jose.JwsAlgorithm.HS256
+                JwsAlgorithm.HS256
             );
 
             // validate the shape of the payload

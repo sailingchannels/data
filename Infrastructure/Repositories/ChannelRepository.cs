@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Core;
@@ -31,7 +31,7 @@ namespace Infrastructure.Repositories
             return await _col
                 .Find(c => c.Language == channelLanguage)
                 .Project<Channel>("{ title: 1, description: 1, lastUploadAt: 1, thumbnail: 1, views: 1, subscribers: 1, publishedAt: 1, videoCount: 1 }")
-                .SortByDescending(this.getSortKey(sortBy))
+                .SortByDescending(getSortKey(sortBy))
                 .Skip(skip)
                 .Limit(take)
                 .ToListAsync();
@@ -77,7 +77,7 @@ namespace Infrastructure.Repositories
         public async Task<Channel> Get(string id)
         {
             return await _col
-                .Find(new BsonDocument()
+                .Find(new BsonDocument
                 {
                     { "_id",  id}
                 })
@@ -91,10 +91,10 @@ namespace Infrastructure.Repositories
                 return new List<Channel>();
             }
 
-            var searchQuery = new BsonDocument()
+            var searchQuery = new BsonDocument
             {
                 {
-                    "$text", new BsonDocument()
+                    "$text", new BsonDocument
                     {
                         { "$search", $"\"{q}\"" }
                     }
@@ -160,12 +160,12 @@ namespace Infrastructure.Repositories
         {
             return sortBy switch
             {
-                ChannelSorting.Views => (x) => x.Views,
-                ChannelSorting.Founded => (x) => x.PublishedAt,
-                ChannelSorting.Subscribers => (x) => x.Subscribers,
-                ChannelSorting.Trending => (x) => x.Popularity.Total,
-                ChannelSorting.Upload => (x) => x.LastUploadAt,
-                _ => (x) => x.Subscribers
+                ChannelSorting.Views => x => x.Views,
+                ChannelSorting.Founded => x => x.PublishedAt,
+                ChannelSorting.Subscribers => x => x.Subscribers,
+                ChannelSorting.Trending => x => x.Popularity.Total,
+                ChannelSorting.Upload => x => x.LastUploadAt,
+                _ => x => x.Subscribers
             };
         }
     }

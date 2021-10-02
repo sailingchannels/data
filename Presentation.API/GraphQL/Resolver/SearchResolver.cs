@@ -35,7 +35,7 @@ namespace Presentation.API.GraphQL.Resolver
                 arguments: new QueryArguments(
                     new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "query" }
                 ),
-                resolve: async (context) =>
+                resolve: async context =>
                 {
                     var searchResult = await _searchUseCase.Handle(new SearchRequest(
                         context.GetArgument<string>("query")

@@ -1,7 +1,7 @@
-﻿using GraphQL.Types;
-using Presentation.API.GraphQL.Resolver;
-using System;
+﻿using System;
 using System.Linq;
+using GraphQL.Types;
+using Presentation.API.GraphQL.Resolver;
 
 namespace Presentation.API.GraphQL
 {

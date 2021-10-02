@@ -3,7 +3,7 @@ using Core.Enums;
 
 namespace Core.DTO
 {
-    public record ChannelIdentificationDto()
+    public record ChannelIdentificationDto
     {
         public string ChannelId { get; init; }
         public string Source  { get; init; }

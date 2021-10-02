@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Core.Entities;
 using Core.Interfaces.Repositories;
@@ -30,14 +31,19 @@ namespace Infrastructure.Repositories
             return updateSuccessful;
         }
 
-        public async Task<ChannelPublishPrediction> Get(string channelId)
+        public async Task<ChannelPublishPrediction?> Get(string channelId)
         {
             return await _col
-                .Find(new BsonDocument()
+                .Find(new BsonDocument
                 {
                     { "_id",  channelId}
                 })
                 .FirstOrDefaultAsync<ChannelPublishPrediction>();
+        }
+        
+        public async Task<IReadOnlyCollection<ChannelPublishPrediction>> Get()
+        {
+            return await _col.Find(new BsonDocument()).ToListAsync();
         }
     }
 }

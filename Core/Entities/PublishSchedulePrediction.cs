@@ -1,9 +1,7 @@
 ﻿namespace Core.Entities
 {
-    public record PublishSchedulePrediction
+    public record PublishSchedulePrediction : Weekstamp
     {
-        public int DayOfTheWeek { get; init; }
-        public int HourOfTheDay { get; init; }
         public float PublishedVideos { get; init; }
         public float DeviationFromAverage { get; init; }
 

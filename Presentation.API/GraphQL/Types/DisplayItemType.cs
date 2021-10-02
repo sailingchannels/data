@@ -10,10 +10,10 @@ namespace Presentation.API.GraphQL.Types
         {
             Name = "DisplayItem";
 
-            Field(i => i.ID, nullable: false);
-            Field(i => i.Title, nullable: true);
-            Field(i => i.Description, nullable: true);
-            Field(i => i.Thumbnail, nullable: true);
+            Field(i => i.ID);
+            Field(i => i.Title, true);
+            Field(i => i.Description, true);
+            Field(i => i.Thumbnail, true);
         }
     }
 }

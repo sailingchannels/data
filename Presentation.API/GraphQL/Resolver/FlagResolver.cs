@@ -27,7 +27,7 @@ namespace Presentation.API.GraphQL.Resolver
                 arguments: new QueryArguments(
                     new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "channelId" }
                 ),
-                resolve: async (context) =>
+                resolve: async context =>
                 {
                     // read user context dictionary
                     var userContext = (GraphQlUserContext) context.UserContext;
@@ -60,7 +60,7 @@ namespace Presentation.API.GraphQL.Resolver
                 arguments: new QueryArguments(
                     new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "channelId" }
                 ),
-                resolve: async (context) =>
+                resolve: async context =>
                 {
                     // read user context dictionary
                     var userContext = (GraphQlUserContext)context.UserContext;

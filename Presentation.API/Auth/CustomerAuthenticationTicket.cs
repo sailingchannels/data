@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using System.Security.Claims;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
 
 namespace Presentation.API.Auth
 {

@@ -7,7 +7,6 @@ using Core.Interfaces.Repositories;
 using Core.Interfaces.UseCases;
 using GraphQL.Types;
 using Infrastructure.API.Models;
-using Microsoft.Extensions.Logging;
 using Microsoft.Toolkit.Extensions;
 using Presentation.API.GraphQL.Types;
 
@@ -39,7 +38,7 @@ namespace Presentation.API.GraphQL.Resolver
                     new QueryArgument<NonNullGraphType<ListGraphType<StringGraphType>>> { Name = "channelIds" },
                     new QueryArgument<StringGraphType> { Name = "source" }
                 ),
-                resolve: async (context) =>
+                resolve: async context =>
                 {
                     // read user context dictionary
                     var userContext = (GraphQlUserContext)context.UserContext;
@@ -73,7 +72,7 @@ namespace Presentation.API.GraphQL.Resolver
                 arguments: new QueryArguments(
                     new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "channelId" }
                 ),
-                resolve: async (context) =>
+                resolve: async context =>
                 {
                     try
                     {

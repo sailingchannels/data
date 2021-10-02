@@ -45,7 +45,7 @@ namespace Presentation.API.GraphQL.Resolver
                 arguments: new QueryArguments(
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "channelId" }
                 ),
-                resolve: async (context) => 
+                resolve: async context =>
                 {
                     var channelId = context.GetArgument<string>("channelId");
 
@@ -53,7 +53,7 @@ namespace Presentation.API.GraphQL.Resolver
                     var channel = await _channelRepository.Get(channelId);
 
                     var enrichedVideo = video with { Channel = channel};
-                    
+
                     // map entity to model
                     return _mapper.Map<VideoModel>(enrichedVideo);
                 }
@@ -67,7 +67,7 @@ namespace Presentation.API.GraphQL.Resolver
                     new QueryArgument<NonNullGraphType<IntGraphType>> { Name = "skip" },
                     new QueryArgument<NonNullGraphType<IntGraphType>> { Name = "take" }
                 ),
-                resolve: async (context) =>
+                resolve: async context =>
                 {
                     var channelId = context.GetArgument<string>("channelId");
                     var channel = await _channelRepository.Get(channelId);
@@ -77,7 +77,7 @@ namespace Presentation.API.GraphQL.Resolver
                         context.GetArgument<int>("skip"),
                         context.GetArgument<int>("take")
                     );
-                    
+
                     var enrichedVideos = EnrichVideosWithChannel(videos, channel);
 
                     // map entity to model
@@ -85,19 +85,18 @@ namespace Presentation.API.GraphQL.Resolver
                 }
             );
 
-            // VIDEOS: returns all videos of a certain channel
+            // VIDEO COUNT
             graphQlQuery.FieldAsync<IntGraphType>(
                 "videoCount",
                 arguments: new QueryArguments(
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "channelId" }
                 ),
-                resolve: async (context) =>
+                resolve: async context =>
                 {
                     var videoCount = await _videoRepository.CountByChannel(
                         context.GetArgument<string>("channelId")
                     );
 
-                    // map entity to model
                     return videoCount;
                 }
             );
@@ -105,11 +104,9 @@ namespace Presentation.API.GraphQL.Resolver
             // VIDEO COUNT TOTAL
             graphQlQuery.FieldAsync<IntGraphType>(
                 "videoCountTotal",
-                resolve: async (context) =>
+                resolve: async context =>
                 {
                     var videoCount = await _videoRepository.Count();
-
-                    // map entity to model
                     return videoCount;
                 }
             );
@@ -120,7 +117,7 @@ namespace Presentation.API.GraphQL.Resolver
                 arguments: new QueryArguments(
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "channelId" }
                 ),
-                resolve: async (context) =>
+                resolve: async context =>
                 {
                     try
                     {
@@ -132,20 +129,17 @@ namespace Presentation.API.GraphQL.Resolver
 
                         var aggregationModels = new List<VideoPublishAggregationItemModel>();
 
-                        foreach (var daysOfWeek in result.Aggregation)
+                        foreach (var (key, value) in result.Aggregation)
                         {
-                            foreach (var hourOfDay in daysOfWeek.Value)
-                            {
-                                aggregationModels.Add(new VideoPublishAggregationItemModel()
+                            aggregationModels.AddRange(
+                                value.Select(hourOfDay => new VideoPublishAggregationItemModel
                                 {
-                                    DayOfTheWeek = (int)daysOfWeek.Key,
+                                    DayOfTheWeek = (int)key,
                                     HourOfTheDay = hourOfDay.Key,
                                     PublishedVideos = hourOfDay.Value
-                                });
-                            }
+                                }));
                         }
 
-                        // map entity to model
                         return aggregationModels;
                     }
                     catch
@@ -163,9 +157,9 @@ namespace Presentation.API.GraphQL.Resolver
         public void ResolveMutation(GraphQlMutation graphQlMutation)
         {
         }
-        
+
         private IReadOnlyCollection<Video> EnrichVideosWithChannel(
-            IEnumerable<Video> videos, 
+            IEnumerable<Video> videos,
             Channel channel)
         {
             var enrichedVideos = videos.Select(video =>

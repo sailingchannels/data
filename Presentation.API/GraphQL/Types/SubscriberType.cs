@@ -10,9 +10,9 @@ namespace Presentation.API.GraphQL.Types
         {
             Name = "Subscriber";
 
-            Field(i => i.ChannelID, nullable: false);
-            Field(i => i.Date, nullable: false);
-            Field(i => i.Subscribers, nullable: false);
+            Field(i => i.ChannelID);
+            Field(i => i.Date);
+            Field(i => i.Subscribers);
         }
     }
 }

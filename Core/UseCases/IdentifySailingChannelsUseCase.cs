@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Core.DTO;
 using Core.DTO.UseCaseRequests;
 using Core.DTO.UseCaseResponses;
 using Core.Enums;
-using Core.Interfaces.UseCases;
-using Core.DTO;
 using Core.Interfaces.Repositories;
+using Core.Interfaces.UseCases;
 
 namespace Core.UseCases
 {
@@ -54,7 +54,7 @@ namespace Core.UseCases
             // fetch details for youtube channel
             var channelDetails = await _youTubeChannelDetailUseCase.Handle(
                 new YouTubeChannelDetailRequest(
-                    new List<string>() { channelIdResponse.ChannelId }
+                    new List<string> { channelIdResponse.ChannelId }
                 )
             );
 
@@ -72,7 +72,7 @@ namespace Core.UseCases
             {
                 // check if channel has been suggested before
                 var suggestions = await _suggestionRepository.GetAny(
-                    new List<string>() { channelIdResponse.ChannelId }
+                    new List<string> { channelIdResponse.ChannelId }
                 );
 
                 // a suggestion does already exist for this channel

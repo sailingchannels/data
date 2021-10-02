@@ -1,5 +1,5 @@
-﻿using Infrastructure.API.Models;
-using GraphQL.Types;
+﻿using GraphQL.Types;
+using Infrastructure.API.Models;
 
 namespace Presentation.API.GraphQL.Types
 {
@@ -10,9 +10,9 @@ namespace Presentation.API.GraphQL.Types
         {
             Name = "ChannelCustomLink";
 
-            Field(i => i.Title, nullable: true);
-            Field(i => i.Icon, nullable: true);
-            Field(i => i.URL, nullable: true);
+            Field(i => i.Title, true);
+            Field(i => i.Icon, true);
+            Field(i => i.URL, true);
         }
     }
 }

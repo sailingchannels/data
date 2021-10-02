@@ -1,12 +1,13 @@
-﻿using System.Linq;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Core.Entities;
 using Core.Interfaces.Services;
 using Google.Apis.YouTube.v3;
 using Google.Apis.YouTube.v3.Data;
-using System;
-using AutoMapper;
+using Video = Google.Apis.YouTube.v3.Data.Video;
 
 namespace Infrastructure.Services
 {
@@ -35,7 +36,7 @@ namespace Infrastructure.Services
 
             string part = "snippet";
 
-            if (includingStatistics == true)
+            if (includingStatistics)
             {
                 part += ",statistics";
             }
@@ -120,9 +121,9 @@ namespace Infrastructure.Services
 
             VideoListResponse result = await request.ExecuteAsync();
 
-            Google.Apis.YouTube.v3.Data.Video video = result?.Items.FirstOrDefault();
+            Video video = result?.Items.FirstOrDefault();
 
-            return new VideoStatusStatistics()
+            return new VideoStatusStatistics
             {
                 Comments = video.Statistics.CommentCount.GetValueOrDefault(0),
                 Dislikes = video.Statistics.DislikeCount.GetValueOrDefault(0),

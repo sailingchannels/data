@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
 using Core.DTO.UseCaseRequests;
+using Core.Entities;
 using Core.Enums;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.UseCases;
@@ -24,7 +25,7 @@ namespace Presentation.API.GraphQL.Resolver
         public ChannelResolver(
             IChannelRepository channelRepository,
             IIdentifySailingChannelUseCase identifySailingChannelUseCase,
-            IMapper mapper, 
+            IMapper mapper,
             IChannelPublishPredictionRepository channelPublishPredictionRepository)
         {
             _channelRepository = channelRepository ?? throw new ArgumentNullException(nameof(channelRepository));
@@ -48,7 +49,7 @@ namespace Presentation.API.GraphQL.Resolver
                     new QueryArgument<NonNullGraphType<IntGraphType>> { Name = "take" },
                     new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "language" }
                 ),
-                resolve: async context => 
+                resolve: async context =>
                 {
                     var channels = await _channelRepository.GetAll(
                         (ChannelSorting) Enum.Parse(typeof(ChannelSorting), context.GetArgument<string>("sortBy")),
@@ -57,9 +58,9 @@ namespace Presentation.API.GraphQL.Resolver
                         context.GetArgument<string>("language")
                     );
 
-                    var channelsWithTruncatedDescription = 
+                    var channelsWithTruncatedDescription =
                         TruncateChannelDescriptions(channels);
-                    
+
                     // map entity to model
                     return _mapper.Map<List<ChannelModel>>(channelsWithTruncatedDescription);
                 }
@@ -71,7 +72,7 @@ namespace Presentation.API.GraphQL.Resolver
                 arguments: new QueryArguments(
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "id" }
                 ),
-                resolve: async context => 
+                resolve: async context =>
                 {
                     var channel = await _channelRepository.Get(context.GetArgument<string>("id"));
 
@@ -83,7 +84,7 @@ namespace Presentation.API.GraphQL.Resolver
             // CHANNEL COUNT TOTAL
             graphQlQuery.FieldAsync<IntGraphType>(
                 "channelCountTotal",
-                resolve: async (context) =>
+                resolve: async context =>
                 {
                     var channelCount = await _channelRepository.Count();
 
@@ -107,7 +108,7 @@ namespace Presentation.API.GraphQL.Resolver
                     );
 
                     var identifiedChannel = result.IdentifiedChannel;
-                    
+
                     // truncate description
                     if (result.IdentifiedChannel != null && result.IdentifiedChannel.Channel != null)
                     {
@@ -128,28 +129,77 @@ namespace Presentation.API.GraphQL.Resolver
                 "channelPublishPrediction",
                 arguments: new QueryArguments(
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "channelId" },
-                    new QueryArgument<BooleanGraphType> { Name = "filterBelowAverage", DefaultValue = false}
+                    new QueryArgument<BooleanGraphType> { Name = "filterBelowAverage", DefaultValue = false},
+                    new QueryArgument<FloatGraphType> {Name = "minGradient", DefaultValue = 0.7f}
                 ),
-                resolve: async (context) =>
+                resolve: async context =>
                 {
                     var channelId = context.GetArgument<string>("channelId");
                     var filterBelowAverage = context.GetArgument<bool>("filterBelowAverage");
-                    
+                    var minGradient = context.GetArgument<double>("minGradient");
+
                     var predictionResult = await _channelPublishPredictionRepository.Get(channelId);
 
-                    if (predictionResult is null or { Gradient: <= 0.7f })
+                    if (predictionResult is null || predictionResult.Gradient <= minGradient)
                     {
                         return null;
                     }
 
                     var predictionItems = predictionResult.PredictionItems;
-                    
+
                     if (filterBelowAverage)
                     {
                         predictionItems = predictionItems.Where(i => i.DeviationFromAverage > 0);
                     }
-                    
+
                     return _mapper.Map<List<PublishSchedulePredictionModel>>(predictionItems);
+                });
+
+            // CHANNEL PUBLISH PREDICTIONS
+            graphQlQuery.FieldAsync<ListGraphType<PublishPredictionProgrammingItemType>>(
+                "channelPublishPredictions",
+                arguments: new QueryArguments(
+                    new QueryArgument<FloatGraphType> {Name = "minGradient", DefaultValue = 0.7f}
+                ),
+                resolve: async context =>
+                {
+                    var minGradient = context.GetArgument<double>("minGradient");
+
+                    var predictionResultsPerChannel =
+                        await _channelPublishPredictionRepository.Get();
+
+                    predictionResultsPerChannel = predictionResultsPerChannel
+                        .Where(p => p.Gradient >= minGradient)
+                        .ToList();
+
+                    var programmingLookup = new Dictionary<Weekstamp, List<Channel>>();
+
+                    foreach (var publishPrediction in predictionResultsPerChannel)
+                    {
+                        var topPredictionResult = publishPrediction.PredictionItems.FirstOrDefault();
+                        if (topPredictionResult is null) continue;
+
+                        var predictionWeekstamp = (Weekstamp) topPredictionResult;
+
+                        if (!programmingLookup.ContainsKey(predictionWeekstamp))
+                        {
+                            programmingLookup.Add(predictionWeekstamp, new List<Channel>());
+                        }
+
+                        programmingLookup[predictionWeekstamp].Add(new Channel
+                        {
+                            Id = publishPrediction.Id,
+                            Title = publishPrediction.Title
+                        });
+                    }
+
+                    return programmingLookup
+                        .Select(programmingLookupItem =>
+                            new PublishPredictionProgrammingItemModel(
+                                programmingLookupItem.Key.DayOfTheWeek,
+                                programmingLookupItem.Key.HourOfTheDay,
+                                _mapper.Map<List<ChannelModel>>(programmingLookupItem.Value)))
+                        .ToList();
                 });
         }
 

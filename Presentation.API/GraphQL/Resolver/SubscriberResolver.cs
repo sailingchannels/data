@@ -4,7 +4,6 @@ using AutoMapper;
 using Core.Interfaces.Repositories;
 using GraphQL.Types;
 using Infrastructure.API.Models;
-using Microsoft.Extensions.Logging;
 using Presentation.API.GraphQL.Types;
 
 namespace Presentation.API.GraphQL.Resolver
@@ -37,11 +36,11 @@ namespace Presentation.API.GraphQL.Resolver
                     new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "channelId" },
                     new QueryArgument<IntGraphType> { Name = "days" }
                 ),
-                resolve: async (context) =>
+                resolve: async context =>
                 {
                     var result = await _subscriberRepository.GetHistory(
                        context.GetArgument<string>("channelId"),
-                       context.GetArgument<int>("days", 7)
+                       context.GetArgument("days", 7)
                     );
 
                     // map entity to model

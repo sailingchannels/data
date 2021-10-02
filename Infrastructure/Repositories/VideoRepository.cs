@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Core;
 using Core.Entities;
@@ -28,10 +28,10 @@ namespace Infrastructure.Repositories
             }
 
             // construct the search query
-            var query = new BsonDocument()
+            var query = new BsonDocument
             {
                 {
-                    "$text", new BsonDocument()
+                    "$text", new BsonDocument
                     {
                         { "$search", $"\"{q}\"" }
                     }
@@ -93,7 +93,7 @@ namespace Infrastructure.Repositories
                 .Project<Video>("{ publishedAt: 1 }")
                 .ToListAsync();
 
-            return result.Select(v => v.PublishedAt).ToList<uint>();
+            return result.Select(v => v.PublishedAt).ToList();
         }
         
         public async Task<IReadOnlyCollection<string>> Exist(IReadOnlyCollection<string> ids)

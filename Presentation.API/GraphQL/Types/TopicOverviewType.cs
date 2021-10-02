@@ -10,8 +10,8 @@ namespace Presentation.API.GraphQL.Types
         {
             Name = "TopicOverview";
 
-            Field(i => i.LatestChannelTitle, nullable: false);
-            Field(i => i.LatestVideoID, nullable: false);
+            Field(i => i.LatestChannelTitle);
+            Field(i => i.LatestVideoID);
             Field<TopicType>("Topic");
         }
     }

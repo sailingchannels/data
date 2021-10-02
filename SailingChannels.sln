@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.Test", "Core.Test\Core
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Service.PublishScheduleDetection", "Service.PublishScheduleDetection\Service.PublishScheduleDetection.csproj", "{9763FCAC-D122-4256-A4C0-F57D49A98604}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Service.Crawler", "Service.Crawler\Service.Crawler.csproj", "{03A70981-AB10-4F00-92C7-5F6CEB8E91A0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,5 +39,9 @@ Global
 		{9763FCAC-D122-4256-A4C0-F57D49A98604}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9763FCAC-D122-4256-A4C0-F57D49A98604}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9763FCAC-D122-4256-A4C0-F57D49A98604}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03A70981-AB10-4F00-92C7-5F6CEB8E91A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03A70981-AB10-4F00-92C7-5F6CEB8E91A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03A70981-AB10-4F00-92C7-5F6CEB8E91A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03A70981-AB10-4F00-92C7-5F6CEB8E91A0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

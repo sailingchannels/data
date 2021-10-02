@@ -14,7 +14,7 @@ namespace Infrastructure
             string[] googleApiKeys = Environment.GetEnvironmentVariable("GOOGLE_API_KEYS").Split(",");
 
             // youtube api
-            services.AddTransient(s => new YouTubeService(new BaseClientService.Initializer()
+            services.AddTransient(s => new YouTubeService(new BaseClientService.Initializer
             {
                 ApiKey = googleApiKeys[rnd.Next(googleApiKeys.Length)],
                 ApplicationName = "Sailing-Channels"

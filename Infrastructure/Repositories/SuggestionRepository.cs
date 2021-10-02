@@ -33,9 +33,9 @@ namespace Infrastructure.Repositories
 
         public async Task AddSuggestion(string channelId, string userId)
         {
-            var flag = new Suggestion()
+            var flag = new Suggestion
             {
-                Id = new SuggestionId()
+                Id = new SuggestionId
                 {
                     ChannelId = channelId,
                     UserId = userId

@@ -1,10 +1,10 @@
-﻿using Autofac;
-using System;
+﻿using System;
 using System.Linq;
+using Autofac;
 
 namespace Service.PublishScheduleDetection.DI
 {
-    public class AutofacCompositionRootModule : Autofac.Module
+    public class AutofacCompositionRootModule : Module
     {
         protected override void Load(ContainerBuilder builder)
         {

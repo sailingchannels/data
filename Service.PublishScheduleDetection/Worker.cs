@@ -63,7 +63,7 @@ namespace Service.PublishScheduleDetection
                     {
                         foreach (var hourOfDay in daysOfWeek.Value)
                         {
-                            var item = new VideoPublishAggregationItem()
+                            var item = new VideoPublishAggregationItem
                             {
                                 DayOfTheWeek = (int) daysOfWeek.Key,
                                 HourOfTheDay = hourOfDay.Key,

@@ -15,12 +15,6 @@ namespace Infrastructure.Repositories
             _col = col ?? throw new ArgumentNullException(nameof(col));
         }
 
-        /// <summary>
-        /// Store a new flag
-        /// </summary>
-        /// <param name="channelId"></param>
-        /// <param name="userId"></param>
-        /// <returns></returns>
         public async Task AddFlag(string channelId, string userId)
         {
             var flag = new Flag()
@@ -36,16 +30,10 @@ namespace Infrastructure.Repositories
             await _col.InsertOneAsync(flag);
         }
 
-        /// <summary>
-        /// Check if a flag exists for user and channel
-        /// </summary>
-        /// <param name="channelId"></param>
-        /// <param name="userId"></param>
-        /// <returns></returns>
         public async Task<bool> FlagExists(string channelId, string userId)
         {
-            return (await _col
-                .CountDocumentsAsync(t => t.Id.ChannelId == channelId && t.Id.UserId == userId)) > 0;
+            return await _col
+                .CountDocumentsAsync(t => t.Id.ChannelId == channelId && t.Id.UserId == userId) > 0;
         }
     }
 }

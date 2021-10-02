@@ -17,7 +17,7 @@ namespace Infrastructure.Repositories
         
         public async Task Insert(string query)
         {
-            var search = new Search()
+            var search = new Search
             {
                 Query = query,
                 Timestamp = DateTime.UtcNow

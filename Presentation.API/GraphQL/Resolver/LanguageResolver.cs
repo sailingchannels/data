@@ -32,7 +32,7 @@ namespace Presentation.API.GraphQL.Resolver
             // LANGUAGES: a list of all lang codes
             graphQlQuery.FieldAsync<ListGraphType<LanguageType>>(
                 "languages",
-                resolve: async (context) =>
+                resolve: async context =>
                 {
                     var languages = await _languageRepository.GetAll();
 

@@ -11,9 +11,9 @@ namespace Presentation.API.GraphQL.Types
         {
             Name = "VideoPublishAggregationItem";
 
-            Field(v => v.DayOfTheWeek, nullable: false);
-            Field(v => v.HourOfTheDay, nullable: false);
-            Field(v => v.PublishedVideos, nullable: false);
+            Field(v => v.DayOfTheWeek);
+            Field(v => v.HourOfTheDay);
+            Field(v => v.PublishedVideos);
         }
     }
 }

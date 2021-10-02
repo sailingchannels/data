@@ -1,14 +1,14 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Core.DTO;
 using Core.DTO.UseCaseRequests;
 using Core.DTO.UseCaseResponses;
 using Core.Entities;
 using Core.Interfaces.Repositories;
-using Core.Interfaces.UseCases;
 using Core.Interfaces.Services;
+using Core.Interfaces.UseCases;
 
 namespace Core.UseCases
 {
@@ -39,7 +39,7 @@ namespace Core.UseCases
 
             foreach (var storedChannel in storedChannels)
             {
-                identifiedChannels.Add(new ChannelIdentificationDto()
+                identifiedChannels.Add(new ChannelIdentificationDto
                 {
                     ChannelId = storedChannel.Id,
                     Channel = storedChannel,
@@ -55,7 +55,7 @@ namespace Core.UseCases
 
             foreach (var ytChannel in ytChannels)
             {
-                identifiedChannels.Add(new ChannelIdentificationDto()
+                identifiedChannels.Add(new ChannelIdentificationDto
                 {
                     ChannelId = ytChannel.Id,
                     Channel = ytChannel,

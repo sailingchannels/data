@@ -5,7 +5,6 @@ using Core.DTO.UseCaseRequests;
 using Core.Interfaces.UseCases;
 using GraphQL.Types;
 using Infrastructure.API.Models;
-using Microsoft.Extensions.Logging;
 using Presentation.API.GraphQL.Types;
 
 namespace Presentation.API.GraphQL.Resolver
@@ -40,7 +39,7 @@ namespace Presentation.API.GraphQL.Resolver
                 arguments: new QueryArguments(
                     new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "language" }
                 ),
-                resolve: async (context) =>
+                resolve: async context =>
                 {
                     var result = await _topicsOverviewUseCase.Handle(
                         new TopicsOverviewRequest(context.GetArgument<string>("language"))
@@ -57,7 +56,7 @@ namespace Presentation.API.GraphQL.Resolver
                 arguments: new QueryArguments(
                     new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "topicId" }
                 ),
-                resolve: async (context) =>
+                resolve: async context =>
                 {
                     var result = await _topicDetailUseCase.Handle(
                         new TopicDetailRequest(context.GetArgument<string>("topicId"))

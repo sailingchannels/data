@@ -1,5 +1,5 @@
-﻿using Infrastructure.API.Models;
-using GraphQL.Types;
+﻿using GraphQL.Types;
+using Infrastructure.API.Models;
 
 namespace Presentation.API.GraphQL.Types
 {
@@ -10,16 +10,16 @@ namespace Presentation.API.GraphQL.Types
         {
             Name = "Channel";
 
-            Field(i => i.ID, nullable: false);
-            Field(i => i.Title, nullable: false);
-            Field(i => i.Description, nullable: false);
-            Field(i => i.LastUploadAt, nullable: true);
-            Field(i => i.PublishedAt, nullable: false);
-            Field(i => i.Subscribers, nullable: false);
-            Field(i => i.SubscribersHidden, nullable: false);
-            Field(i => i.VideoCount, nullable: false);
-            Field(i => i.Views, nullable: false);
-            Field(i => i.Thumbnail, nullable: true);
+            Field(i => i.ID);
+            Field(i => i.Title);
+            Field(i => i.Description);
+            Field(i => i.LastUploadAt, true);
+            Field(i => i.PublishedAt);
+            Field(i => i.Subscribers);
+            Field(i => i.SubscribersHidden);
+            Field(i => i.VideoCount);
+            Field(i => i.Views);
+            Field(i => i.Thumbnail, true);
 
             Field<ListGraphType<ChannelCustomLinkType>>("CustomLinks");
             Field<ListGraphType<StringGraphType>>("Keywords");

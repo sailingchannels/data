@@ -1,12 +1,12 @@
 using Autofac;
 using Infrastructure;
 using Infrastructure.Mappings;
-using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Presentation.API.Auth;
 using Presentation.API.DI;
 
@@ -67,7 +67,7 @@ namespace Presentation.API
 
             // add automapper
             services.AddDataMappings();
-            
+
             // inject youtube api
             services.AddYoutubeAPI();
 
