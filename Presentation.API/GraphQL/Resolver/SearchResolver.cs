@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Web;
 using AutoMapper;
 using Core.DTO.UseCaseRequests;
 using Core.Interfaces.UseCases;
@@ -38,10 +39,10 @@ namespace Presentation.API.GraphQL.Resolver
                 resolve: async context =>
                 {
                     var searchResult = await _searchUseCase.Handle(new SearchRequest(
-                        context.GetArgument<string>("query")
+                        HttpUtility.UrlDecode(context.GetArgument<string>("query"))
                     ));
-                    
-                    var channelsWithTruncatedDescription = 
+
+                    var channelsWithTruncatedDescription =
                         TruncateChannelDescriptions(searchResult.Channels);
 
                     var truncatedDescriptionResults = searchResult with {
