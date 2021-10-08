@@ -15,7 +15,7 @@ namespace Service.PublishScheduleDetection
     public class Worker : BackgroundService
     {
         private const int MaxRecursiveMergeNeighborsDepth = 50;
-        
+
         private readonly ILogger<Worker> _logger;
         private readonly IChannelRepository _channelRepository;
         private readonly IAggregateVideoPublishTimesUseCase _aggregateVideoPublishTimesUseCase;
@@ -24,7 +24,7 @@ namespace Service.PublishScheduleDetection
         public Worker(
             ILogger<Worker> logger,
             IChannelRepository channelRepository,
-            IAggregateVideoPublishTimesUseCase aggregateVideoPublishTimesUseCase, 
+            IAggregateVideoPublishTimesUseCase aggregateVideoPublishTimesUseCase,
             IChannelPublishPredictionRepository channelPublishPredictionRepository)
         {
             _logger = logger;
@@ -32,12 +32,12 @@ namespace Service.PublishScheduleDetection
             _aggregateVideoPublishTimesUseCase = aggregateVideoPublishTimesUseCase;
             _channelPublishPredictionRepository = channelPublishPredictionRepository;
         }
-        
+
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             // read all channel ids
             //var channels = await _channelRepository.GetAllChannelIdAndTitle();
-            var channels = new List<Channel> {new Channel() with { Id = "UCBo9TLJiZ5HI5CXFsCxOhmA" }};
+            var channels = new List<Channel> { new() { Id = "UCBo9TLJiZ5HI5CXFsCxOhmA" } };
 
             _logger.LogInformation(
                 $"{channels.Count} channels will be inspected for publish schedules"
@@ -61,17 +61,13 @@ namespace Service.PublishScheduleDetection
 
                     foreach (var daysOfWeek in result.Aggregation)
                     {
-                        foreach (var hourOfDay in daysOfWeek.Value)
-                        {
-                            var item = new VideoPublishAggregationItem
+                        items.AddRange(daysOfWeek.Value.Select(hourOfDay =>
+                            new VideoPublishAggregationItem
                             {
-                                DayOfTheWeek = (int) daysOfWeek.Key,
+                                DayOfTheWeek = (int)daysOfWeek.Key,
                                 HourOfTheDay = hourOfDay.Key,
                                 PublishedVideos = hourOfDay.Value
-                            };
-
-                            items.Add(item);
-                        }
+                            }));
                     }
 
                     if (items.Count == 0)
@@ -123,7 +119,7 @@ namespace Service.PublishScheduleDetection
             {
                 return items;
             }
-            
+
             var mergedNeighbors = new List<PublishSchedulePrediction>();
             var iterationNeighborFound = false;
 
@@ -135,11 +131,11 @@ namespace Service.PublishScheduleDetection
                 {
                     continue;
                 }
-                
+
                 var prevItem = items[prevIndex];
                 var currentItem = items[i];
                 var neighborFound = AreDayHourNeighbors(prevItem, currentItem);
-                
+
                 if (neighborFound && !iterationNeighborFound)
                 {
                     iterationNeighborFound = true;
@@ -148,7 +144,7 @@ namespace Service.PublishScheduleDetection
                         PublishedVideos = (prevItem.PublishedVideos + currentItem.PublishedVideos) / 2,
                         DeviationFromAverage = (prevItem.DeviationFromAverage + currentItem.DeviationFromAverage) / 2
                     };
-                    
+
                     mergedNeighbors.Add(mergedItem);
                     i++;
                 }
@@ -166,7 +162,7 @@ namespace Service.PublishScheduleDetection
             return MergeNeighbors(mergedNeighbors, ++currentDepth);
         }
 
-        private bool AreDayHourNeighbors(PublishSchedulePrediction a, PublishSchedulePrediction b)
+        private static bool AreDayHourNeighbors(PublishSchedulePrediction a, PublishSchedulePrediction b)
         {
             var indexDiff = Math.Abs(a.DayHourIndex - b.DayHourIndex);
             return indexDiff <= 1;
