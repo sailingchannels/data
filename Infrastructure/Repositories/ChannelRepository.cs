@@ -96,7 +96,7 @@ namespace Infrastructure.Repositories
                 {
                     "$text", new BsonDocument
                     {
-                        { "$search", $"\"{q}\"" }
+                        { "$search", q }
                     }
                 },
                 {

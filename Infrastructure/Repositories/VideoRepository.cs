@@ -33,7 +33,7 @@ namespace Infrastructure.Repositories
                 {
                     "$text", new BsonDocument
                     {
-                        { "$search", $"\"{q}\"" }
+                        { "$search", q }
                     }
                 }
             };
@@ -85,7 +85,7 @@ namespace Infrastructure.Repositories
                 .Limit(take)
                 .ToListAsync();
         }
-        
+
         public async Task<IReadOnlyCollection<uint>> GetPublishedDates(string channelId)
         {
             var result = await _col
@@ -95,7 +95,7 @@ namespace Infrastructure.Repositories
 
             return result.Select(v => v.PublishedAt).ToList();
         }
-        
+
         public async Task<IReadOnlyCollection<string>> Exist(IReadOnlyCollection<string> ids)
         {
             var result = await _col

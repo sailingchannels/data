@@ -20,7 +20,7 @@ namespace Core.UseCases
             IVideoRepository videoRepository,
             IChannelRepository channelRepository,
             ISearchRepository searchRepository
-        ) 
+        )
         {
             _videoRepository = videoRepository ?? throw new ArgumentNullException(nameof(videoRepository));
             _channelRepository = channelRepository ?? throw new ArgumentNullException(nameof(channelRepository));
@@ -29,15 +29,13 @@ namespace Core.UseCases
 
         public async Task<SearchResponse> Handle(SearchRequest message)
         {
-            // store search object
             await _searchRepository.Insert(message.Query);
-            
+
             var videos = await _videoRepository.Search(message.Query);
             var channels = await _channelRepository.Search(message.Query);
-            
+
             var neededChannelIds = new HashSet<string>();
-            var channelLookup = channels
-                .ToDictionary(k => k.Id, v => v);
+            var channelLookup = channels.ToDictionary(k => k.Id, v => v);
 
             // gather list of channel ids for the video results, that are
             // not yet fetched via the channel search results. we need to
@@ -64,9 +62,9 @@ namespace Core.UseCases
             return response;
         }
 
-        private IReadOnlyCollection<Video> EnrichVideosWithChannel(
-            IEnumerable<Video> videos, 
-            Dictionary<string, Channel> channelLookup)
+        private static IReadOnlyCollection<Video> EnrichVideosWithChannel(
+            IEnumerable<Video> videos,
+            IReadOnlyDictionary<string, Channel> channelLookup)
         {
             var enrichedVideos = videos.Select(video =>
             {
