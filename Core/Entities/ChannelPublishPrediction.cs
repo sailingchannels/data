@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Core.Entities
@@ -7,5 +8,6 @@ namespace Core.Entities
         string Title,
         float AverageUploadPerDayHour,
         IEnumerable<PublishSchedulePrediction> PredictionItems,
-        float Gradient);
+        float Gradient,
+        DateTime PredictionDateTimeUtc);
 }

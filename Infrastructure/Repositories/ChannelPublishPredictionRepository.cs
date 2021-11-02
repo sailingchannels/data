@@ -33,12 +33,14 @@ namespace Infrastructure.Repositories
 
         public async Task<ChannelPublishPrediction?> Get(string channelId)
         {
-            return await _col
+            var result = await _col
                 .Find(new BsonDocument
                 {
                     { "_id",  channelId}
                 })
                 .FirstOrDefaultAsync<ChannelPublishPrediction>();
+
+            return result;
         }
         
         public async Task<IReadOnlyCollection<ChannelPublishPrediction>> Get()

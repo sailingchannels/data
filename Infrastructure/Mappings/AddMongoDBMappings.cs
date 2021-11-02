@@ -11,10 +11,8 @@ namespace Infrastructure.Mappings
         {
             // CHANNEL POPULARITY
             BsonClassMap.RegisterClassMap<ChannelPopularity>(cm =>
-            { 
+            {
                 cm.MapMember(c => c.Total).SetElementName("total");
-                cm.MapMember(c => c.Views).SetElementName("views");
-                cm.MapMember(c => c.Subscribers).SetElementName("subscribers");
             });
 
             // CHANNEL CUSTOM LINKS
@@ -80,7 +78,7 @@ namespace Infrastructure.Mappings
             {
                 cm.MapMember(c => c.ChannelId).SetElementName("channel");
                 cm.MapMember(c => c.Tag).SetElementName("tag");
-            }); 
+            });
 
             // TAG
             BsonClassMap.RegisterClassMap<Tag>(cm =>

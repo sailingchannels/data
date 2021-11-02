@@ -36,8 +36,8 @@ namespace Service.PublishScheduleDetection
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             // read all channel ids
-            //var channels = await _channelRepository.GetAllChannelIdAndTitle();
-            var channels = new List<Channel> { new() { Id = "UCBo9TLJiZ5HI5CXFsCxOhmA" } };
+            var channels = await _channelRepository.GetAllChannelIdAndTitle();
+            //var channels = new List<Channel> { new() { Id = "UCBo9TLJiZ5HI5CXFsCxOhmA" } };
 
             _logger.LogInformation(
                 $"{channels.Count} channels will be inspected for publish schedules"
@@ -89,6 +89,12 @@ namespace Service.PublishScheduleDetection
 
                     var mergedNeighbors = MergeNeighbors(sortedByDeviation);
 
+                    if (!mergedNeighbors.Any())
+                    {
+                        _logger.LogWarning($"No publish schedule predictions at all for channel {channel.Id}, skipping...");
+                        continue;
+                    }
+
                     var gradient = 1 - average / mergedNeighbors.First().DeviationFromAverage;
 
                     var channelResult = new ChannelPublishPrediction(
@@ -96,7 +102,8 @@ namespace Service.PublishScheduleDetection
                         channel.Title,
                         average,
                         mergedNeighbors,
-                        gradient);
+                        gradient,
+                        DateTime.UtcNow);
 
                     var updatePredictionSuccessful =
                         await _channelPublishPredictionRepository.UpdatePrediction(channelResult);
@@ -104,6 +111,10 @@ namespace Service.PublishScheduleDetection
                     if (!updatePredictionSuccessful)
                     {
                         _logger.LogWarning($"Updating publish prediction for channel {channel.Id} was not successful");
+                    }
+                    else
+                    {
+                        _logger.LogInformation($"New publish prediction schedule for channel {channel.Id}: gradient={gradient}");
                     }
                 }
                 catch (Exception e)
